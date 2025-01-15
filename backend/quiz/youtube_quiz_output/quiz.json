@@ -1,0 +1,42 @@
+[
+    {
+        "question": "Why did Steve Jobs drop out of Reed College?",
+        "choice1": "He couldn't afford the tuition.",
+        "choice2": "He didn't see the value in it and didn't know what he wanted to do with his life.",
+        "choice3": "He was expelled for poor academic performance.",
+        "choice4": "He wanted to start his own business.",
+        "answer": 2
+    },
+    {
+        "question": "What did Jobs do after dropping out of college that later influenced the design of the Macintosh computer?",
+        "choice1": "He traveled the world, learning about different cultures.",
+        "choice2": "He took a calligraphy class.",
+        "choice3": "He worked as a technician repairing computers.",
+        "choice4": "He studied graphic design at a local art school.",
+        "answer": 2
+    },
+    {
+        "question": "What company did Jobs start besides Apple?",
+        "choice1": "Microsoft",
+        "choice2": "Pixar",
+        "choice3": "Google",
+        "choice4": "Adobe",
+        "answer": 2
+    },
+    {
+        "question": "What was the quote that influenced Jobs' perspective on life and death?",
+        "choice1": "Live each day as if it were your last.",
+        "choice2": "The only way to do great work is to love what you do.",
+        "choice3": "Stay hungry, stay foolish.",
+        "choice4": "Don't be trapped by dogma.",
+        "answer": 1
+    },
+    {
+        "question": "What did Jobs consider the best invention of life?",
+        "choice1": "Technology",
+        "choice2": "Love",
+        "choice3": "Death",
+        "choice4": "Art",
+        "answer": 3
+    }
+]

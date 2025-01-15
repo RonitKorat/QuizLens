@@ -1,0 +1,42 @@
+[
+    {
+        "question": "What is the main topic of the speech?",
+        "choice1": "Mental health",
+        "choice2": "Physical health",
+        "choice3": "Academic success",
+        "choice4": "Social well-being",
+        "answer": 1
+    },
+    {
+        "question": "According to the speaker, what is affected by mental health?",
+        "choice1": "How we think, feel, and act",
+        "choice2": "Only our emotional state",
+        "choice3": "Primarily our physical well-being",
+        "choice4": "Just our academic performance",
+        "answer": 1
+    },
+    {
+        "question": "What are some ways to maintain good mental health mentioned in the speech?",
+        "choice1": "Prioritizing self-care, practicing relaxation techniques, and seeking social support",
+        "choice2": "Ignoring stressors, working harder, and focusing solely on academics",
+        "choice3": "Isolating oneself, neglecting sleep, and maintaining a poor diet",
+        "choice4": "Avoiding social interaction, suppressing emotions, and resisting help",
+        "answer": 1
+    },
+    {
+        "question": "What are some signs of poor mental health according to the speech?",
+        "choice1": "Feeling sad, anxious, or overwhelmed; having trouble concentrating or sleeping; losing interest in enjoyed activities",
+        "choice2": "Increased energy, improved focus, and heightened social interaction",
+        "choice3": "Enhanced sleep quality, reduced stress, and increased motivation",
+        "choice4": "Feeling consistently happy, calm, and energized",
+        "answer": 1
+    },
+    {
+        "question": "Why does the speaker emphasize mental health for students?",
+        "choice1": "Students are under pressure to succeed and need to prioritize their well-being to handle challenges and reach their full potential.",
+        "choice2": "Mental health is less important than physical health for students.",
+        "choice3": "Students should only focus on academics and ignore their mental health.",
+        "choice4": "Mental health is irrelevant to academic success.",
+        "answer": 1
+    }
+]
