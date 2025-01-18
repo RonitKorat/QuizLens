@@ -1,0 +1,42 @@
+[
+    {
+        "question": "Why was Jasprit Bumrah excluded from the T20i series against England?",
+        "choice1": "Workload management",
+        "choice2": "Back spasm",
+        "choice3": "Poor performance in recent matches",
+        "choice4": "Disciplinary reasons",
+        "answer": 1
+    },
+    {
+        "question": "Which injury led to Jasprit Bumrah's absence from the final day of the Sydney Test?",
+        "choice1": "Hamstring tear",
+        "choice2": "Back spasm",
+        "choice3": "Wrist fracture",
+        "choice4": "Concussion",
+        "answer": 2
+    },
+    {
+        "question": "Which young fast bowler is currently recovering from a back injury?",
+        "choice1": "Mohammed Shami",
+        "choice2": "Mayank Yadav",
+        "choice3": "Shivam Dube",
+        "choice4": "Jasprit Bumrah",
+        "answer": 2
+    },
+    {
+        "question": "Which player's omission from the T20i squad was attributed to the emergence of Nithish Reddy and Hardik Pandya?",
+        "choice1": "Shivam Dube",
+        "choice2": "Rishabh Pant",
+        "choice3": "Mayank Yadav",
+        "choice4": "Jasprit Bumrah",
+        "answer": 1
+    },
+    {
+        "question": "Who is considered a certainty in the playing 11 against England due to their recent performance?",
+        "choice1": "Rishabh Pant",
+        "choice2": "Sanju Samson",
+        "choice3": "Dhruv Jurel",
+        "choice4": "KL Rahul",
+        "answer": 2
+    }
+]

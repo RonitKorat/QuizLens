@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
-from temp import extract_audio_from_youtube, transcribe_audio, generate_quiz
+from temp import extract_audio_from_youtube, transcribe_audio, generate_quiz, save_to_file
 from flask_cors import CORS
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -12,10 +13,16 @@ def extract_audio():
     if not youtube_url:
         return jsonify({'error': 'YouTube URL is required'}), 400
 
-    audio_path = extract_audio_from_youtube(youtube_url)
+    output_dir = "youtube_quiz_output"
+    audio_path = extract_audio_from_youtube(youtube_url, output_dir)
     if audio_path:
         transcription = transcribe_audio(audio_path)
-        return jsonify({'audio_path': audio_path, 'transcription': transcription})
+        if transcription:
+            transcription_path = os.path.join(output_dir, "transcription.txt")
+            save_to_file(transcription, transcription_path)
+            return jsonify({'transcription': transcription}), 200
+        else:
+            return jsonify({'error': 'Failed to transcribe audio'}), 500
     else:
         return jsonify({'error': 'Failed to extract audio'}), 500
 
@@ -28,7 +35,9 @@ def generate_quiz_endpoint():
 
     quiz = generate_quiz(transcription)
     if quiz:
-        return jsonify({'quiz': quiz})
+        quiz_path = os.path.join("youtube_quiz_output", "quiz.json")
+        save_to_file(quiz, quiz_path)
+        return jsonify({'quiz': quiz, 'transcription': transcription})
     else:
         return jsonify({'error': 'Failed to generate quiz'}), 500
 

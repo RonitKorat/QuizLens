@@ -1,0 +1,42 @@
+[
+    {
+        "question": "What is mental health defined as in the talk?",
+        "choice1": "Our emotional, psychological, and social well-being.",
+        "choice2": "Just our emotional well-being.",
+        "choice3": "Primarily our physical health.",
+        "choice4": "The ability to handle stress.",
+        "answer": 1
+    },
+    {
+        "question": "Why is mental health especially important for students?",
+        "choice1": "They face pressure to succeed.",
+        "choice2": "They are more likely to experience mental health issues.",
+        "choice3": "They have less resilience than older adults.",
+        "choice4": "Their brains are still developing.",
+        "answer": 1
+    },
+    {
+        "question": "What is one example of self-care mentioned in the talk?",
+        "choice1": "Getting enough sleep.",
+        "choice2": "Seeking professional help.",
+        "choice3": "Ignoring stressful situations.",
+        "choice4": "Focusing solely on academics.",
+        "answer": 1
+    },
+    {
+        "question": "Besides self-care, what other factor contributes to good mental health?",
+        "choice1": "Social support.",
+        "choice2": "Financial stability.",
+        "choice3": "Living in a quiet environment.",
+        "choice4": "Having a competitive mindset.",
+        "answer": 1
+    },
+    {
+        "question": "What is a sign of poor mental health according to the speaker?",
+        "choice1": "Loss of interest in previously enjoyed activities.",
+        "choice2": "Increased motivation and energy levels.",
+        "choice3": "Improved concentration and focus.",
+        "choice4": "Stronger relationships with peers.",
+        "answer": 1
+    }
+]
