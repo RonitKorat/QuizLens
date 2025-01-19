@@ -8,6 +8,19 @@ import re
 
 api_key = "AIzaSyDl2dpL2n037ceHc2TWjcisIBVwBSxr9SU" 
 genai.configure(api_key=api_key)
+
+def cleanup_files(*file_paths):
+    """
+    Cleanup multiple files and handle any errors.
+    """
+    for file_path in file_paths:
+        try:
+            if file_path and os.path.exists(file_path):
+                os.remove(file_path)
+                print(f"Cleaned up file: {file_path}")
+        except Exception as e:
+            print(f"Error cleaning up {file_path}: {e}")
+
 def extract_audio_from_youtube(youtube_url, output_dir="temp"):
     """
     Extracts audio from a YouTube video and saves it as MP3.
@@ -18,15 +31,16 @@ def extract_audio_from_youtube(youtube_url, output_dir="temp"):
     try:
         command = [
             "yt-dlp",
-            "-x",  # Extract audio
-            "--audio-format", "mp3",  # Convert to mp3 format
-            "-o", audio_output_path,  # Output path
+            "-x",
+            "--audio-format", "mp3",
+            "-o", audio_output_path,
             youtube_url
         ]
         subprocess.run(command, check=True)
         return audio_output_path
     except subprocess.CalledProcessError as e:
         print(f"Error downloading audio: {e}")
+        cleanup_files(audio_output_path)
         return None
 
 def transcribe_audio(audio_path):
@@ -46,13 +60,10 @@ def extract_json_from_response(response_text):
     Extracts JSON from the response text, handling potential formatting issues.
     """
     try:
-        # Try to find JSON array in the text using regex
         json_match = re.search(r'\[.*\]', response_text, re.DOTALL)
         if json_match:
             json_str = json_match.group(0)
             return json.loads(json_str)
-        
-        # If no JSON array found, try parsing the entire response
         return json.loads(response_text)
     except Exception as e:
         print(f"Error extracting JSON: {e}")
@@ -63,8 +74,6 @@ def generate_quiz(transcription):
     Generates a quiz using Google's Generative AI based on the transcription.
     """
     try:
-        
-        
         generation_config = {
             "temperature": 0.7,
             "top_p": 0.95,
@@ -141,40 +150,44 @@ def save_to_file(content, filename):
 def main():
     output_dir = "youtube_quiz_output"
     Path(output_dir).mkdir(exist_ok=True)
-
-    youtube_url = input("Enter the YouTube video link: ")
     
-    audio_path = extract_audio_from_youtube(youtube_url, output_dir)
-    if not audio_path:
-        print("Failed to download audio. Please check the URL and try again.")
-        return
-
-    print("Transcribing audio...")
-    transcription = transcribe_audio(audio_path)
-    if not transcription:
-        print("Failed to transcribe audio.")
-        return
-
-    transcription_path = os.path.join(output_dir, "transcription.txt")
-    if save_to_file(transcription, transcription_path):
-        print(f"Transcription saved to {transcription_path}")
-
-    print("Generating quiz...")
-     # Replace with your actual API key
-    quiz_data = generate_quiz(transcription)
+    audio_path = None
+    transcription_path = None
+    quiz_path = None
     
-    if quiz_data:
-        quiz_path = os.path.join(output_dir, "quiz.json")  # Changed filename to quiz.json
-        if save_to_file(quiz_data, quiz_path):
-            print(f"Quiz saved to {quiz_path}")
-    else:
-        print("Failed to generate quiz.")
-
     try:
-        os.remove(audio_path)
-        print("Temporary audio file cleaned up.")
-    except Exception as e:
-        print(f"Error cleaning up audio file: {e}")
+        youtube_url = input("Enter the YouTube video link: ")
+        
+        audio_path = extract_audio_from_youtube(youtube_url, output_dir)
+        if not audio_path:
+            print("Failed to download audio. Please check the URL and try again.")
+            return
+
+        print("Transcribing audio...")
+        transcription = transcribe_audio(audio_path)
+        if not transcription:
+            print("Failed to transcribe audio.")
+            return
+
+        transcription_path = os.path.join(output_dir, "transcription.txt")
+        if save_to_file(transcription, transcription_path):
+            print(f"Transcription saved to {transcription_path}")
+
+        print("Generating quiz...")
+        quiz_data = generate_quiz(transcription)
+        
+        if quiz_data:
+            quiz_path = os.path.join(output_dir, "quiz.json")
+            if save_to_file(quiz_data, quiz_path):
+                print(f"Quiz saved to {quiz_path}")
+                print("Quiz generation completed successfully!")
+        else:
+            print("Failed to generate quiz.")
+            
+    finally:
+        # Cleanup all generated files
+        cleanup_files(audio_path, transcription_path, quiz_path)
+        print("All temporary files have been cleaned up.")
 
 if __name__ == "__main__":
     main()
