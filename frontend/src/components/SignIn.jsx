@@ -10,9 +10,8 @@ export default function SignIn() {
   const {user}=useContext(UserContext);
 
   const handleSubmit = async (e) => {
-    console.log(user)
     // console.log(email,password);
-    console.log(user);
+    
     e.preventDefault();
     let result = await fetch("http://localhost:2200/signin", {
       method: "POST",
@@ -22,6 +21,8 @@ export default function SignIn() {
       body: JSON.stringify({ email, password }),
     });
     result = await result.json();
+    console.log(result);
+    user.name=result.user.name
     if (result.message === "Login Success") {
 
       navigate("/home");

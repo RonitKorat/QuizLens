@@ -1,18 +1,21 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import UserContext from '../context/userContext';
+import QuizContext from '../context/quizContext';
 
 const UploadVideoPage = () => {
     const [videoURL, setVideoURL] = useState('');
     const [progress, setProgress] = useState(0);
-    const [quiz, setQuiz] = useState('');
     const [transcription, setTranscription] = useState('');
+    const [isTranscription,setIsTranscription]=useState(false);
+    const [isQuiz,setIsQuiz]=useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [uploading, setUploading] = useState(false);
-    const [showDropdown, setShowDropdown] = useState(false); // Add state for showDropdown
+    const [showDropdown, setShowDropdown] = useState(false);
 
     const { user } = useContext(UserContext);
     const navigate = useNavigate();
+    const { quiz, setQuiz } = useContext(QuizContext);
 
     const handleURLUpload = async () => {
         if (!videoURL) {
@@ -34,6 +37,8 @@ const UploadVideoPage = () => {
 
             const data = await response.json();
             if (response.ok) {
+                console.log(transcription);
+                setIsTranscription(true);
                 setTranscription(data.transcription);
                 setProgress(100);
                 setUploading(false);
@@ -65,6 +70,7 @@ const UploadVideoPage = () => {
             const data = await response.json();
             if (response.ok) {
                 setQuiz(data.quiz);
+                setIsQuiz(true);
                 navigate('/quiz', { state: { quiz: data.quiz, transcription: transcription } });
             } else {
                 setErrorMessage(data.error || 'Failed to generate quiz');
@@ -75,13 +81,14 @@ const UploadVideoPage = () => {
     };
 
     const getInitials = (name) => {
+        console.log(name);
         if (!name) return '';
         return name.split(' ').map((n) => n[0].toUpperCase()).join('');
     };
 
     const handleLogout = () => {
-        // Handle logout logic here
-        console.log('User logged out');
+        navigate("/signin");
+        // console.log('User logged out');
     };
 
     return (
@@ -122,8 +129,7 @@ const UploadVideoPage = () => {
                     />
                     {errorMessage && <p className="text-red-500 text-sm mt-2">{errorMessage}</p>}
                 </div>
-
-                {!uploading && (
+                {!isTranscription && (
                     <button
                         className="w-full bg-purple-500 hover:bg-purple-600 text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2"
                         onClick={handleURLUpload}
@@ -132,15 +138,15 @@ const UploadVideoPage = () => {
                     </button>
                 )}
 
-                {uploading && (
+                {(uploading || isTranscription) && (
                     <div className="w-full bg-gray-200 rounded-full h-4 mt-4">
                         <div className="bg-purple-500 h-4 rounded-full" style={{ width: `${progress}%` }}></div>
                     </div>
                 )}
 
-                {transcription && (
+                {isTranscription && (
                     <button
-                        className="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 mt-4"
+                        className="w-full bg-purple-500 hover:bg-purple-600 text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 mt-4"
                         onClick={handleGenerateQuiz}
                     >
                         Generate Quiz

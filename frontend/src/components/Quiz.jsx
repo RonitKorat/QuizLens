@@ -1,9 +1,8 @@
-import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import React, { useState, useContext } from "react";
+import QuizContext from "../context/quizContext";
 
 const Quiz = () => {
-  const location = useLocation();
-  const { quiz } = location.state || {};
+  const { quiz } = useContext(QuizContext);
 
   const [answers, setAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
@@ -37,7 +36,7 @@ const Quiz = () => {
   };
 
   return (
-    <div className="min-h-screen bg-dark-blue p-6 flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-r from-blue-500 to-purple-600 p-6 flex items-center justify-center">
       <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-3xl">
         <h1 className="text-4xl font-bold text-gray-800 mb-6 text-center">
           Generated Quiz
@@ -68,7 +67,7 @@ const Quiz = () => {
         ))}
         <button
           onClick={handleSubmit}
-          className="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 mt-4 transition-all duration-300"
+          className="w-full bg-purple-500 hover:bg-purple-600 text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 mt-4 transition-all duration-300"
         >
           Submit
         </button>

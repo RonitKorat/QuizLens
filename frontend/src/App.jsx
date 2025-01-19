@@ -4,18 +4,37 @@ import { Route, Routes } from "react-router-dom";
 import UserState from "./context/userState";
 import SignUp from "./components/SignUp";
 import Quiz from "./components/Quiz";
+import QuizState from "./context/quizState";
+import ProtectedRoute from "./components/ProtectedRoute";
 export default function App() {
   return (
     <>
-      <UserState>
-        <Routes>
-          <Route path="/" element={<SignUp />}></Route>
-          <Route path="/signup" element={<SignUp />}></Route>
-          <Route path="/signin" element={<SignIn />}></Route>
-          <Route path="/home" element={<Home />}></Route>
-          <Route path="/quiz" element={<Quiz />}></Route>
-        </Routes>
-      </UserState>
+      <QuizState>
+        <UserState>
+          <Routes>
+            <Route path="/" element={<SignUp />}></Route>
+            <Route path="/signup" element={<SignUp />}></Route>
+            <Route path="/signin" element={<SignIn />}></Route>
+
+            <Route
+              path="/home"
+              element={
+                <ProtectedRoute>
+                  <Home />
+                </ProtectedRoute>
+              }
+            ></Route>
+            <Route
+              path="/quiz"
+              element={
+                <ProtectedRoute>
+                  <Quiz />
+                </ProtectedRoute>
+              }
+            ></Route>
+          </Routes>
+        </UserState>
+      </QuizState>
     </>
   );
 }
