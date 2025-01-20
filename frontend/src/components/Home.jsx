@@ -127,7 +127,7 @@ const UploadVideoPage = () => {
                     />
                     {errorMessage && <p className="text-red-500 text-sm mt-2">{errorMessage}</p>}
                 </div>
-                {!isTranscription && (
+                {!uploading && !isTranscription && (
                     <button
                         className="w-full bg-purple-500 hover:bg-purple-600 text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2"
                         onClick={handleURLUpload}
@@ -136,12 +136,12 @@ const UploadVideoPage = () => {
                     </button>
                 )}
 
-                {(uploading || isTranscription) && (
+                {(uploading) && (
                     <div className="w-full bg-gray-200 rounded-full h-4 mt-4">
                         <div className="bg-purple-500 h-4 rounded-full" style={{ width: `${progress}%` }}></div>
                     </div>
                 )}
-
+                
                 {isTranscription && (
                     <button
                         className="w-full bg-purple-500 hover:bg-purple-600 text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 mt-4"
@@ -150,7 +150,7 @@ const UploadVideoPage = () => {
                         Generate Quiz
                     </button>
                 )}
-            </div>
+            </div>  
         </div>
     );
 };
