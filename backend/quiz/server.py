@@ -40,7 +40,7 @@ def extract_audio():
     finally:
         # Cleanup files after response is sent
         cleanup_files(audio_path, transcription_path)
-
+    
 @app.route('/generate-quiz', methods=['POST'])
 def generate_quiz_endpoint():
     quiz_path = None

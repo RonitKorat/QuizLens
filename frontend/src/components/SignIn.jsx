@@ -23,6 +23,7 @@ export default function SignIn() {
     result = await result.json();
     console.log(result);
     user.name=result.user.name
+    user.email=result.user.email
     if (result.message === "Login Success") {
 
       navigate("/home");

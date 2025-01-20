@@ -8,7 +8,11 @@ const Quiz = () => {
   const [submitted, setSubmitted] = useState(false);
 
   if (!quiz) {
-    return <div className="text-center text-xl font-semibold text-gray-800">No quiz data available.</div>;
+    return (
+      <div className="text-center text-xl font-semibold text-gray-800">
+        No quiz data available.
+      </div>
+    );
   }
 
   const handleOptionChange = (questionIndex, option) => {
@@ -20,7 +24,7 @@ const Quiz = () => {
 
   const handleSubmit = () => {
     if (Object.keys(answers).length < quiz.length) {
-      alert('Please answer all questions before submitting.');
+      alert("Please answer all questions before submitting.");
       return;
     }
 
@@ -48,7 +52,10 @@ const Quiz = () => {
             </h2>
             <div className="grid grid-cols-1 gap-4">
               {["choice1", "choice2", "choice3", "choice4"].map((choice, i) => (
-                <label key={i} className="flex items-center bg-purple-100 hover:bg-purple-200 p-2 rounded-md transition-all duration-300">
+                <label
+                  key={i}
+                  className="flex items-center bg-purple-100 hover:bg-purple-200 p-2 rounded-md transition-all duration-300"
+                >
                   <input
                     type="radio"
                     name={`question-${index}`}

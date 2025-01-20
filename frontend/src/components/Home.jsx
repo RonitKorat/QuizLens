@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import UserContext from '../context/userContext';
 import QuizContext from '../context/quizContext';
@@ -34,7 +34,6 @@ const UploadVideoPage = () => {
                 },
                 body: JSON.stringify({ youtube_url: videoURL }),
             });
-
             const data = await response.json();
             if (response.ok) {
                 console.log(transcription);
@@ -81,7 +80,6 @@ const UploadVideoPage = () => {
     };
 
     const getInitials = (name) => {
-        console.log(name);
         if (!name) return '';
         return name.split(' ').map((n) => n[0].toUpperCase()).join('');
     };
