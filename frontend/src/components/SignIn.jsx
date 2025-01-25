@@ -33,7 +33,7 @@ export default function SignIn() {
   };
   return (
     <>
-      <div className="flex h-screen w-screen flex-col justify-center bg-blue-900 px-6 py-12 lg:px-8">
+      <div className="flex h-screen w-screen flex-col justify-center bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <img
             alt="Your Company"

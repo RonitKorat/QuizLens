@@ -6,6 +6,8 @@ import SignUp from "./components/SignUp";
 import Quiz from "./components/Quiz";
 import QuizState from "./context/quizState";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Review from "./components/Review";
+
 export default function App() {
   return (
     <>
@@ -31,7 +33,8 @@ export default function App() {
                   <Quiz />
                 </ProtectedRoute>
               }
-            ></Route>
+            ></Route> 
+            <Route path="/review" element={<Review />}></Route>
           </Routes>
         </UserState>
       </QuizState>

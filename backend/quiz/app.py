@@ -174,8 +174,7 @@ def main():
             print(f"Transcription saved to {transcription_path}")
 
         print("Generating quiz...")
-        quiz_data = generate_quiz(transcription)
-        
+        quiz_data = generate_quiz(transcription)        
         if quiz_data:
             quiz_path = os.path.join(output_dir, "quiz.json")
             if save_to_file(quiz_data, quiz_path):
@@ -183,7 +182,7 @@ def main():
                 print("Quiz generation completed successfully!")
         else:
             print("Failed to generate quiz.")
-            
+
     finally:
         # Cleanup all generated files
         cleanup_files(audio_path, transcription_path, quiz_path)
