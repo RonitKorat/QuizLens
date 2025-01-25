@@ -1,12 +1,12 @@
-import Home from "./components/Home";
-import SignIn from "./components/SignIn";
+import Home from "./main-components/Home";
+import SignIn from "./main-components/SignIn";
 import { Route, Routes } from "react-router-dom";
-import UserState from "./context/userState";
-import SignUp from "./components/SignUp";
-import Quiz from "./components/Quiz";
-import QuizState from "./context/quizState";
-import ProtectedRoute from "./components/ProtectedRoute";
-import Review from "./components/Review";
+import {UserState} from "./context/userState";
+import SignUp from "./main-components/SignUp";
+import Quiz from "./main-components/Quiz";
+import {QuizState} from "./context/quizState";
+import ProtectedRoute from "./main-components/ProtectedRoute";
+import Review from "./main-components/Review";
 
 export default function App() {
   return (
@@ -41,3 +41,4 @@ export default function App() {
     </>
   );
 }
+

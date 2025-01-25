@@ -21,12 +21,6 @@ const Quiz = () => {
     return () => clearInterval(timer);
   }, []);
 
-  useEffect(() => {
-    if (quiz && quiz.length > 0) {
-      console.log("Quiz Data from Backend:", quiz);
-    }
-  }, [quiz]);
-
   const handleOptionChange = (questionIndex, option) => {
     setAnswers({
       ...answers,
@@ -57,7 +51,7 @@ const Quiz = () => {
     // console.log(answers);
     // console.log(correctAnswers);
     setSubmitted(true);
-    // alert(`You got ${correctAnswers} out of ${quiz.length} correct!`);
+    alert(`You got ${correctAnswers} out of ${quiz.length} correct!`);
   };
 
   const handleReview=()=>{

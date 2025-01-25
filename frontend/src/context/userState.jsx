@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import UserContext from './userContext';
 
-const UserState = (props) => {
+export function UserState(props) {
     const [user, setUser] = useState({ name: '', email: '' });
 
     return (
@@ -10,5 +10,3 @@ const UserState = (props) => {
         </UserContext.Provider>
     );
 };
-
-export default UserState;

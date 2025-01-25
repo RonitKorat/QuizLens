@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import App from "../App";
 import UserContext from "../context/userContext";
 
 export default function SignUp() {
