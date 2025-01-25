@@ -1,38 +1,45 @@
 const express = require("express");
 const app = express();
 const User = require("./db/user");
+const Quiz = require("./db/quiz");
 require("./db/config");
-const cors=require("cors");
-const { default: mongoose } = require("mongoose");
+const cors = require("cors");
 
 app.use(express.json());
 app.use(cors());
 
-// app.get("/",async (req,res)=>{
-//   const result=await User.find();
-//   res.send(result);
-// })
-
-
-
 app.post("/signup", async (req, res) => {
   let user = new User(req.body);
-  user =await user.save()
+  user = await user.save();
   res.send(user);
 });
 
 app.post("/signin", async (req, res) => {
-  let email=req.body.email;
-  let password=req.body.password;
-  const user=await User.findOne({email,password});
-  if(!user)
-  {
-    return res.status(400).json({message:"User not found"});
-  }
-  else
-  {
-    return res.status(200).json({message:"Login Success",user});
+  let email = req.body.email;
+  let password = req.body.password;
+  const user = await User.findOne({ email, password });
+  if (!user) {
+    return res.status(400).json({ message: "User not found" });
+  } else {
+    return res.status(200).json({ message: "Login Success", user });
   }
 });
 
-app.listen(2200);
+app.post("/quiz", async (req, res) => {
+  console.log("Incoming data:", JSON.stringify(req.body, null, 2));
+  try {
+    let quiz = new Quiz(req.body);
+    quiz = await quiz.save();
+    console.log("Quiz saved successfully:", quiz);
+    res.status(201).json({ message: "Quiz saved successfully", quiz: quiz });
+  } catch (error) {
+    console.error("Error saving quiz:", error);
+    res
+      .status(400)
+      .json({ message: "Error saving quiz", error: error.message });
+  }
+});
+
+app.listen(2200, () => {
+  console.log("Server is running on port 2200");
+});

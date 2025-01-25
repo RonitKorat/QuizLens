@@ -3,15 +3,17 @@ import QuizContext from "../context/quizContext";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import UserContext from "../context/userContext";
 const Quiz = () => {
   const { quiz } = useContext(QuizContext);
+  const {user}=useContext(UserContext);
 
   const [answers, setAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [rewiewed, setReviewed] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [timeLeft, setTimeLeft] = useState(600); // 10 minutes timer
-
+  
   const navigate = useNavigate("");
 
   const { toast } = useToast();
@@ -31,6 +33,8 @@ const Quiz = () => {
     });
   };
 
+  
+
   const handleSubmit = () => {
     if (Object.keys(answers).length < quiz.length) {
       toast({
@@ -41,8 +45,6 @@ const Quiz = () => {
 
     let correctAnswers = 0;
     quiz.forEach((question, index) => {
-      // console.log("question :", question.question);
-      // console.log("answer :", answers[index]);
       console.log("correct answer ", question.answer);
       const selectedChoice = answers[index];
       const selectedChoiceNumber =
@@ -53,10 +55,11 @@ const Quiz = () => {
         correctAnswers++;
       }
     });
-    // console.log(answers);
-    // console.log(correctAnswers);
     setSubmitted(true);
-    toast({title:"Quiz submitted! Thank you for your participation.",description:"Click Review button for review your quiz"});
+    toast({
+      title: "Quiz submitted! Thank you for your participation.",
+      description: "Click Review button for review your quiz",
+    });
     alert(`You got ${correctAnswers} out of ${quiz.length} correct!`);
   };
 
@@ -89,9 +92,8 @@ const Quiz = () => {
       </div>
     );
   }
-
   return (
-    <div className="min-h-screen bg-dark-blue p-6 flex items-center justify-center">
+    <div className="min-h-screen bg-[rgb(10,25,47)] p-6 flex items-center justify-center">
       <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-3xl">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-gray-800">
@@ -130,7 +132,7 @@ const Quiz = () => {
           <Button
             onClick={handlePrev}
             disabled={currentQuestion === 0}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition-all duration-300"
+            className="bg-blue-900 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition-all duration-300"
           >
             Previous
           </Button>
