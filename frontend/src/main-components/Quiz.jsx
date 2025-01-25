@@ -1,7 +1,8 @@
 import React, { useState, useContext, useEffect } from "react";
 import QuizContext from "../context/quizContext";
 import { useNavigate } from "react-router-dom";
-
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 const Quiz = () => {
   const { quiz } = useContext(QuizContext);
 
@@ -12,6 +13,8 @@ const Quiz = () => {
   const [timeLeft, setTimeLeft] = useState(600); // 10 minutes timer
 
   const navigate = useNavigate("");
+
+  const { toast } = useToast();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -30,7 +33,9 @@ const Quiz = () => {
 
   const handleSubmit = () => {
     if (Object.keys(answers).length < quiz.length) {
-      alert("Please answer all questions before submitting.");
+      toast({
+        title: "Please answer all questions before submitting.",
+      });
       return;
     }
 
@@ -54,9 +59,9 @@ const Quiz = () => {
     alert(`You got ${correctAnswers} out of ${quiz.length} correct!`);
   };
 
-  const handleReview=()=>{
-    navigate("/review");     
-  }
+  const handleReview = () => {
+    navigate("/review");
+  };
 
   const handleNext = () => {
     if (currentQuestion < quiz.length - 1) {
@@ -121,37 +126,37 @@ const Quiz = () => {
           </div>
         </div>
         <div className="flex justify-between">
-          <button
+          <Button
             onClick={handlePrev}
             disabled={currentQuestion === 0}
             className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition-all duration-300"
           >
             Previous
-          </button>
+          </Button>
           {currentQuestion < quiz.length - 1 ? (
-            <button
+            <Button
               onClick={handleNext}
               className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition-all duration-300"
             >
               Next
-            </button>
+            </Button>
           ) : (
-            <button
+            <Button
               onClick={handleSubmit}
               className="bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 transition-all duration-300"
             >
               Submit
-            </button>
+            </Button>
           )}
         </div>
         {submitted && !rewiewed && (
           <div className="mt-6 text-center">
-            <button
+            <Button
               onClick={handleReview}
               className="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2 transition-all duration-300"
             >
               Review
-            </button>
+            </Button>
           </div>
         )}
         {rewiewed && (

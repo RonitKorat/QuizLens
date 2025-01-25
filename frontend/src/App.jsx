@@ -7,6 +7,7 @@ import Quiz from "./main-components/Quiz";
 import {QuizState} from "./context/quizState";
 import ProtectedRoute from "./main-components/ProtectedRoute";
 import Review from "./main-components/Review";
+import { Toaster } from "@/components/ui/toaster"
 
 export default function App() {
   return (
@@ -38,6 +39,8 @@ export default function App() {
           </Routes>
         </UserState>
       </QuizState>
+
+      <Toaster/>
     </>
   );
 }
