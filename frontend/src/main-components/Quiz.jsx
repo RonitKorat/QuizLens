@@ -56,6 +56,7 @@ const Quiz = () => {
     // console.log(answers);
     // console.log(correctAnswers);
     setSubmitted(true);
+    toast({title:"Quiz submitted! Thank you for your participation.",description:"Click Review button for review your quiz"});
     alert(`You got ${correctAnswers} out of ${quiz.length} correct!`);
   };
 
@@ -157,11 +158,6 @@ const Quiz = () => {
             >
               Review
             </Button>
-          </div>
-        )}
-        {rewiewed && (
-          <div className="mt-6 text-center text-xl font-semibold text-gray-800">
-            Quiz submitted! Thank you for your participation.
           </div>
         )}
       </div>

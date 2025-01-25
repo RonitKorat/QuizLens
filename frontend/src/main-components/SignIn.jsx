@@ -1,18 +1,23 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import UserContext from "../context/userContext";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const {user}=useContext(UserContext);
+  const [loading, setLoading] = useState(false);
+
+  const { user } = useContext(UserContext);
 
   const handleSubmit = async (e) => {
     // console.log(email,password);
-    
+
     e.preventDefault();
+    setLoading(true);
     let result = await fetch("http://localhost:2200/signin", {
       method: "POST",
       headers: {
@@ -22,10 +27,10 @@ export default function SignIn() {
     });
     result = await result.json();
     console.log(result);
-    user.name=result.user.name
-    user.email=result.user.email
+    user.name = result.user.name;
+    user.email = result.user.email;
     if (result.message === "Login Success") {
-
+      setLoading(false);
       navigate("/home");
     } else {
       alert("User not found");
@@ -100,12 +105,13 @@ export default function SignIn() {
             </div>
 
             <div>
-              <button
+              <Button
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                Sign in
-              </button>
+                {loading ? <Loader2 className="animate-spin" /> : null}
+                {loading ? "Signing" : "Sign In"}
+              </Button>
             </div>
           </form>
 
