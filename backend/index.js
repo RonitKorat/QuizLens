@@ -26,17 +26,12 @@ app.post("/signin", async (req, res) => {
 });
 
 app.post("/quiz", async (req, res) => {
-  console.log("Incoming data:", JSON.stringify(req.body, null, 2));
   try {
     let quiz = new Quiz(req.body);
     quiz = await quiz.save();
-    console.log("Quiz saved successfully:", quiz);
-    res.status(201).json({ message: "Quiz saved successfully", quiz: quiz });
+    res.status(201).json({ message: "Quiz saved successfully", quiz });
   } catch (error) {
-    console.error("Error saving quiz:", error);
-    res
-      .status(400)
-      .json({ message: "Error saving quiz", error: error.message });
+    res.status(400).json({ message: "Error saving quiz", error });
   }
 });
 

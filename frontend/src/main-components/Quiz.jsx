@@ -39,6 +39,7 @@ const Quiz = () => {
       });
       return;
     }
+
     let correctAnswers = 0;
     const questions = quiz.map((question, index) => {
       const selectedChoice = answers[index];
@@ -58,16 +59,12 @@ const Quiz = () => {
       };
     });
 
-    const timeTaken = 600 - timeLeft; // Calculate time taken in seconds
-
     const data = {
       user: user.name,
       questions: questions,
       score: correctAnswers,
-      time: timeTaken, // Add time taken to the data
+      time: 600 - timeLeft, // Include the time field
     };
-
-    setReviewQuiz(data);
 
     try {
       const response = await fetch("http://localhost:2200/quiz", {
