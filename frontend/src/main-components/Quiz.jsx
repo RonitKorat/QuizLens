@@ -65,6 +65,7 @@ const Quiz = () => {
       score: correctAnswers,
       time: 600 - timeLeft, // Include the time field
     };
+    setReviewQuiz(data);
 
     try {
       const response = await fetch("http://localhost:2200/quiz", {
