@@ -4,18 +4,18 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import UserContext from "../context/userContext";
+
 const Quiz = () => {
   const { quiz } = useContext(QuizContext);
-  const {user}=useContext(UserContext);
+  const { user } = useContext(UserContext);
 
   const [answers, setAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
-  const [rewiewed, setReviewed] = useState(false);
+  const [reviewed, setReviewed] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [timeLeft, setTimeLeft] = useState(600); // 10 minutes timer
-  
-  const navigate = useNavigate("");
 
+  const navigate = useNavigate("");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -26,16 +26,14 @@ const Quiz = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const handleOptionChange = (questionIndex, option) => {
+  const handleOptionChange = (questionIndex, optionIndex) => {
     setAnswers({
       ...answers,
-      [questionIndex]: option,
+      [questionIndex]: optionIndex,
     });
   };
 
-  
-
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (Object.keys(answers).length < quiz.length) {
       toast({
         title: "Please answer all questions before submitting.",
@@ -44,17 +42,39 @@ const Quiz = () => {
     }
 
     let correctAnswers = 0;
-    quiz.forEach((question, index) => {
-      console.log("correct answer ", question.answer);
+    const questions = quiz.map((question, index) => {
       const selectedChoice = answers[index];
-      const selectedChoiceNumber =
-        ["choice1", "choice2", "choice3", "choice4"].indexOf(selectedChoice) +
-        1;
-      console.log("selected", selectedChoiceNumber);
-      if (selectedChoiceNumber === question.answer) {
+      if (selectedChoice === question.answer) {
         correctAnswers++;
       }
+      return {
+        questionText: question.question,
+        options: [question.choice1, question.choice2, question.choice3, question.choice4],
+        correctAnswer: question.answer,
+        selectOption: selectedChoice,
+      };
     });
+
+    const data = {
+      user: user.name,
+      questions: questions,
+      score: correctAnswers,
+    };
+
+    try {
+      const response = await fetch("http://localhost:2200/quiz", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      const result = await response.json();
+      console.log("Quiz saved successfully:", result);
+    } catch (error) {
+      console.error("Error saving quiz:", error);
+    }
+
     setSubmitted(true);
     toast({
       title: "Quiz submitted! Thank you for your participation.",
@@ -116,9 +136,9 @@ const Quiz = () => {
                 <input
                   type="radio"
                   name={`question-${currentQuestion}`}
-                  value={choice}
-                  checked={answers[currentQuestion] === choice}
-                  onChange={() => handleOptionChange(currentQuestion, choice)}
+                  value={i + 1}
+                  checked={answers[currentQuestion] === i + 1}
+                  onChange={() => handleOptionChange(currentQuestion, i + 1)}
                   className="mr-2"
                 />
                 <span className="font-medium text-gray-800">
@@ -152,7 +172,7 @@ const Quiz = () => {
             </Button>
           )}
         </div>
-        {submitted && !rewiewed && (
+        {submitted && !reviewed && (
           <div className="mt-6 text-center">
             <Button
               onClick={handleReview}

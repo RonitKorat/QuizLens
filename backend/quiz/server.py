@@ -16,7 +16,6 @@ CORS(app)
 def extract_audio():
     audio_path = None
     transcription_path = None
-
     try:
         data = request.json
         youtube_url = data.get('youtube_url')
