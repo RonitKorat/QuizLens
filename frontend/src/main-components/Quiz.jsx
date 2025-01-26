@@ -6,8 +6,9 @@ import { useToast } from "@/hooks/use-toast";
 import UserContext from "../context/userContext";
 
 const Quiz = () => {
-  const { quiz } = useContext(QuizContext);
+  const { quiz,setReviewQuiz } = useContext(QuizContext);
   const { user } = useContext(UserContext);
+  
 
   const [answers, setAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
@@ -61,6 +62,7 @@ const Quiz = () => {
       score: correctAnswers,
     };
 
+    setReviewQuiz(data);
     try {
       const response = await fetch("http://localhost:2200/quiz", {
         method: "POST",
