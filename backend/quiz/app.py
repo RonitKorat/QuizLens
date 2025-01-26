@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 import re
 
-api_key = "AIzaSyDk59cIw8-vyuazJJRY32SfVXGyA61zqTo" 
+api_key = "AIzaSyDxsGiGgSY9B80XYTgElsCbccAclXiNof4" 
 genai.configure(api_key=api_key)
 
 def cleanup_files(*file_paths):

@@ -1,8 +1,9 @@
-import React, { useContext } from 'react';
-import QuizContext from '../context/quizContext';
+import React, { useContext } from "react";
+import QuizContext from "../context/quizContext";
 
 export default function Review() {
   const { reviewQuiz } = useContext(QuizContext);
+  console.log("quiz:", reviewQuiz);
 
   if (!reviewQuiz || !reviewQuiz.questions) {
     return (
@@ -36,36 +37,49 @@ export default function Review() {
               {index + 1}. {question.questionText}
             </h3>
             <div className="grid grid-cols-1 gap-4">
-              {question.options.map((option, i) => (
-                <div
-                  key={i}
-                  className={`p-4 rounded-md text-gray-900 font-medium shadow-sm border transition-all duration-300 
-                    ${
-                      question.correctAnswer === option
-                        ? 'bg-green-200 border-green-500'
-                        : question.selectOption === option
-                        ? 'bg-red-200 border-red-500'
-                        : 'bg-white border-gray-300'
-                    }`}
-                >
-                  {i + 1}. {option}
-                </div>
-              ))}
+              {question.options.map((option, i) => {
+                let bgColor = "bg-white border-gray-300";
+                if (question.correctAnswer === question.selectOption) {
+                  if (option === question.correctAnswer)
+                    bgColor = "bg-green-200 border-green-500";
+                } else {
+                  if (option === question.correctAnswer)
+                    bgColor = "bg-green-200 border-green-500";
+                  else if (option === question.selectOption)
+                    bgColor = "bg-red-200 border-red-500";
+                }
+                return (
+                  <div
+                    key={i}
+                    className={`p-4 rounded-md text-gray-900 font-medium shadow-sm border transition-all duration-300 ${bgColor}`}
+                  >
+                    {i + 1}. {option}
+                  </div>
+                );
+              })}
             </div>
             <div className="mt-2 text-gray-800">
               {question.correctAnswer === question.selectOption ? (
                 <span className="text-green-600">Correct (1/1)</span>
               ) : (
                 <span className="text-red-600">
-                  Incorrect (0/1) - Correct Answer: <span className="text-green-600">{question.correctAnswer}</span>
+                  Incorrect (0/1) - Correct Answer:{" "}
+                  <span className="text-green-600">
+                    {question.correctAnswer}
+                  </span>
                 </span>
               )}
+            </div>
+            <div className="mt-4 text-gray-800">
+              <span>Selected option: {question.selectOption}</span>
             </div>
           </div>
         ))}
         <div className="mt-8 text-center">
           <h2 className="text-3xl font-extrabold text-gray-900">
-            Total Score: <span className="text-indigo-600">{reviewQuiz.score}</span> / {reviewQuiz.questions.length}
+            Total Score:{" "}
+            <span className="text-indigo-600">{reviewQuiz.score}</span> /{" "}
+            {reviewQuiz.questions.length}
           </h2>
         </div>
       </div>

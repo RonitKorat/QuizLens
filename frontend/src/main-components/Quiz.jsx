@@ -6,9 +6,8 @@ import { useToast } from "@/hooks/use-toast";
 import UserContext from "../context/userContext";
 
 const Quiz = () => {
-  const { quiz,setReviewQuiz } = useContext(QuizContext);
+  const { quiz, setReviewQuiz } = useContext(QuizContext);
   const { user } = useContext(UserContext);
-  
 
   const [answers, setAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
@@ -33,7 +32,6 @@ const Quiz = () => {
       [questionIndex]: optionIndex,
     });
   };
-
   const handleSubmit = async () => {
     if (Object.keys(answers).length < quiz.length) {
       toast({
@@ -41,7 +39,6 @@ const Quiz = () => {
       });
       return;
     }
-
     let correctAnswers = 0;
     const questions = quiz.map((question, index) => {
       const selectedChoice = answers[index];
@@ -50,19 +47,28 @@ const Quiz = () => {
       }
       return {
         questionText: question.question,
-        options: [question.choice1, question.choice2, question.choice3, question.choice4],
+        options: [
+          question.choice1,
+          question.choice2,
+          question.choice3,
+          question.choice4,
+        ],
         correctAnswer: question.answer,
         selectOption: selectedChoice,
       };
     });
 
+    const timeTaken = 600 - timeLeft; // Calculate time taken in seconds
+
     const data = {
       user: user.name,
       questions: questions,
       score: correctAnswers,
+      time: timeTaken, // Add time taken to the data
     };
 
     setReviewQuiz(data);
+
     try {
       const response = await fetch("http://localhost:2200/quiz", {
         method: "POST",
