@@ -21,7 +21,7 @@ print(result['text'])
 with open("transcription.txt", "w") as text_file:
     text_file.write(transcribed_text)
 
-genai.configure(api_key="")
+genai.configure(api_key="AIzaSyDl2dpL2n037ceHc2TWjcisIBVwBSxr9SU")
 
 # Set up the model
 generation_config = {

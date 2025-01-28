@@ -132,7 +132,7 @@ const Quiz = () => {
         <div className="mb-6">
           <h2 className="text-2xl font-semibold text-gray-800 mb-4">
             {quiz[currentQuestion].question}
-          </h2>
+          </h2> 
           <div className="grid grid-cols-1 gap-4">
             {["choice1", "choice2", "choice3", "choice4"].map((choice, i) => (
               <label

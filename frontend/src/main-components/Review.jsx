@@ -1,8 +1,10 @@
 import React, { useContext } from "react";
 import QuizContext from "../context/quizContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Review() {
   const { reviewQuiz } = useContext(QuizContext);
+  const navigate=useNavigate();
   console.log("quiz:", reviewQuiz);
 
   if (!reviewQuiz || !reviewQuiz.questions) {
@@ -16,6 +18,10 @@ export default function Review() {
       </div>
     );
   }
+
+  const handleScorecard=()=>{
+    navigate('/scorecard');
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-500 to-purple-600 p-6 flex flex-col items-center">
@@ -81,6 +87,14 @@ export default function Review() {
             <span className="text-indigo-600">{reviewQuiz.score}</span> /{" "}
             {reviewQuiz.questions.length}
           </h2>
+        </div>
+        <div className="mt-6 text-center">
+          <button
+            onClick={handleScorecard}
+            className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition-all duration-300"
+          >
+            Scorecard
+          </button>
         </div>
       </div>
     </div>

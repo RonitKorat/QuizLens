@@ -11,7 +11,7 @@ app.use(cors());
 app.post("/signup", async (req, res) => {
   let user = new User(req.body);
   user = await user.save();
-  res.send(user);
+  res.send(user); 
 });
 
 app.post("/signin", async (req, res) => {
@@ -33,6 +33,12 @@ app.post("/quiz", async (req, res) => {
   } catch (error) {
     res.status(400).json({ message: "Error saving quiz", error });
   }
+});
+
+app.get("/scoreboard",async(req,res)=>{
+  const data=await Quiz.find();
+  console.log(data);
+  res.send(data);
 });
 
 app.listen(2200, () => {

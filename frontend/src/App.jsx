@@ -8,6 +8,7 @@ import {QuizState} from "./context/quizState";
 import ProtectedRoute from "./main-components/ProtectedRoute";
 import Review from "./main-components/Review";
 import { Toaster } from "@/components/ui/toaster"
+import ScoreCard from "./main-components/ScoreCard";
 
 export default function App() {
   return (
@@ -36,6 +37,7 @@ export default function App() {
               }
             ></Route> 
             <Route path="/review" element={<Review />}></Route>
+            <Route path="/scorecard" element={<ScoreCard />}></Route>
           </Routes>
         </UserState>
       </QuizState>
