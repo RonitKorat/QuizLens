@@ -5,8 +5,9 @@ import subprocess
 import json
 from pathlib import Path
 import re
+from dotenv import load_dotenv
 
-api_key = "AIzaSyByDV3A8gg4y9oPaBmYo-Qi7GKEzPIwKII" 
+api_key = os.getenv("API_KEY")
 genai.configure(api_key=api_key)
 
 def cleanup_files(*file_paths):
