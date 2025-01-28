@@ -1,12 +1,13 @@
 const mongoose = require("mongoose");
+const dotenv = require("dotenv");
 
-mongoose.connect(
-  "mongodb+srv://ronitpatel505:Ronit123@test.eq618.mongodb.net/videotoquiz?retryWrites=true&w=majority&appName=test",
-  {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  }
-);
+dotenv.config();
+
+const url = process.env.MONGO_URL;
+mongoose.connect(url, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 mongoose.connection.on("connected", () => {
   console.log("Connected to MongoDB successfully");

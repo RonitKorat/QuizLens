@@ -9,7 +9,6 @@ from dotenv import load_dotenv
 
 api_key = os.getenv("API_KEY")
 genai.configure(api_key=api_key)
-
 def cleanup_files(*file_paths):
     """
     Cleanup multiple files and handle any errors.
