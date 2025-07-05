@@ -21,7 +21,7 @@ print(result['text'])
 with open("transcription.txt", "w") as text_file:
     text_file.write(transcribed_text)
 
-genai.configure(api_key="AIzaSyDl2dpL2n037ceHc2TWjcisIBVwBSxr9SU")
+genai.configure(api_key="AIzaSyC1uij-f6wvJKEZIxIZmI6DPyp1cWQNG78")
 
 # Set up the model
 generation_config = {
@@ -50,7 +50,7 @@ safety_settings = [
   },
 ]
 
-model = genai.GenerativeModel(model_name="gemini-1.5-pro-latest",
+model = genai.GenerativeModel(model_name="gemini-2.5-flash",
                               generation_config=generation_config,
                               safety_settings=safety_settings)
 
