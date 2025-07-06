@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from app import (
     extract_audio_from_youtube, 
+    extract_audio_from_local_video,
     transcribe_audio, 
     generate_quiz, 
     save_to_file,
@@ -34,6 +35,7 @@ def extract_audio():
         transcription_path = os.path.join(output_dir, "transcription.txt")
         save_to_file(transcription, transcription_path)
         
+        print("[extract-audio] Transcription:", transcription)
         return jsonify({'transcription': transcription}), 200
         
     finally:
@@ -62,6 +64,62 @@ def generate_quiz_endpoint():
     finally:
         # Cleanup quiz file after response is sent
         cleanup_files(quiz_path)
+
+@app.route('/upload-video', methods=['POST'])
+def upload_video():
+    audio_path = None
+    transcription_path = None
+    uploaded_file_path = None
+    try:
+        if 'video' not in request.files:
+            return jsonify({'error': 'No video file provided'}), 400
+        video_file = request.files['video']
+        if video_file.filename == '':
+            return jsonify({'error': 'No selected file'}), 400
+
+        print(f"Received video file: {video_file.filename}")
+        print(f"File content type: {video_file.content_type}")
+
+        # Validate file extension
+        allowed_extensions = {'.mp4', '.avi', '.mov', '.mkv', '.wmv', '.flv', '.webm', '.m4v'}
+        file_extension = os.path.splitext(video_file.filename)[1].lower()
+        
+        if file_extension not in allowed_extensions:
+            return jsonify({
+                'error': f'Unsupported video format. Supported formats: {", ".join(allowed_extensions)}'
+            }), 400
+
+        output_dir = "youtube_quiz_output"
+        os.makedirs(output_dir, exist_ok=True)
+        uploaded_file_path = os.path.join(output_dir, video_file.filename)
+        video_file.save(uploaded_file_path)
+        
+        print(f"Video file saved to: {uploaded_file_path}")
+        file_size = os.path.getsize(uploaded_file_path)
+        print(f"Video file size: {file_size} bytes")
+
+        # Extract audio from the uploaded video file
+        audio_path = extract_audio_from_local_video(uploaded_file_path, output_dir)
+        if not audio_path:
+            return jsonify({'error': 'Failed to extract audio from video'}), 500
+
+        transcription = transcribe_audio(audio_path)
+        if not transcription:
+            return jsonify({'error': 'Failed to transcribe audio'}), 500
+
+        transcription_path = os.path.join(output_dir, "transcription.txt")
+        save_to_file(transcription, transcription_path)
+
+        print("[upload-video] Transcription:", transcription)
+        return jsonify({'transcription': transcription}), 200
+    except Exception as e:
+        print(f"Error in upload_video endpoint: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': f'Internal server error: {str(e)}'}), 500
+    finally:
+        # Cleanup files after response is sent
+        cleanup_files(audio_path, transcription_path, uploaded_file_path)
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -4,6 +4,7 @@ import { Route, Routes } from "react-router-dom";
 import {UserState} from "./context/userState";
 import SignUp from "./main-components/SignUp";
 import Quiz from "./main-components/Quiz";
+import Leaderboard from "./main-components/Leaderboard";
 import {QuizState} from "./context/quizState";
 import ProtectedRoute from "./main-components/ProtectedRoute";
 import Review from "./main-components/Review";
@@ -35,7 +36,15 @@ export default function App() {
                   <Quiz />
                 </ProtectedRoute>
               }
-            ></Route> 
+            ></Route>
+            <Route
+              path="/leaderboard"
+              element={
+                <ProtectedRoute>
+                  <Leaderboard />
+                </ProtectedRoute>
+              }
+            ></Route>
             <Route path="/review" element={<Review />}></Route>
             <Route path="/scorecard" element={<ScoreCard />}></Route>
           </Routes>

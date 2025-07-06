@@ -2,170 +2,143 @@ import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import UserContext from "../context/userContext";
 import QuizContext from "../context/quizContext";
-import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { motion } from "framer-motion";
+import { Loader2, Trophy, Target, TrendingUp, Zap } from "lucide-react";
 
-const UploadVideoPage = () => {
-  const [videoURL, setVideoURL] = useState("");
-  const [transcription, setTranscription] = useState("");
-  const [isTranscription, setIsTranscription] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [uploading, setUploading] = useState(false);
+// Import components
+import Header from "../components/Header";
+import StatCard from "../components/StatCard";
+import UploadSection from "../components/UploadSection";
+import RecentQuizzes from "../components/RecentQuizzes";
+import { useUpload } from "../hooks/useUpload";
+
+// Animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 }
+};
+
+const AdvancedHomePage = () => {
   const [showDropdown, setShowDropdown] = useState(false);
+  const [recentQuizzes] = useState([
+    { id: 1, title: "JavaScript Fundamentals", score: 90, date: "2 hours ago" },
+    { id: 2, title: "React Hooks", score: 75, date: "1 day ago" },
+    { id: 3, title: "Python Basics", score: 95, date: "3 days ago" }
+  ]);
 
-  const { user } = useContext(UserContext);
+  const { user, userStats, setUserStats, setUser, isLoading } = useContext(UserContext);
   const navigate = useNavigate();
   const { setQuiz } = useContext(QuizContext);
 
-  const [loading, setLoading] = useState(false);
+  // Use custom upload hook
+  const uploadHook = useUpload();
 
-  const handleURLUpload = async () => {
-    if (!videoURL) {
-      setErrorMessage("Please enter a valid video URL.");
-      return;
-    }
-    setUploading(true);
-    setLoading(true);
-    try {
-      const response = await fetch("http://localhost:5000/extract-audio", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ youtube_url: videoURL }),
-      });
-      const data = await response.json();
-      if (response.ok) {
-        setIsTranscription(true);
-        setTranscription(data.transcription);
-        setUploading(false);
-        setLoading(false);
-      } else {
-        setErrorMessage(data.error || "Failed to extract audio");
-        setUploading(false);
-        setLoading(false);
-      }
-    } catch (error) {
-      setErrorMessage("Failed to extract audio");
-      setUploading(false);
-      setLoading(false);
-    }
+  const updateStatsAfterQuizGeneration = () => {
+    setUserStats(prevStats => ({
+      ...prevStats,
+      totalQuizzes: (prevStats?.totalQuizzes || 0) + 1,
+      quizzesThisWeek: (prevStats?.quizzesThisWeek || 0) + 1
+    }));
   };
 
   const handleGenerateQuiz = async () => {
-    if (!transcription) {
-      setErrorMessage("Transcription is required to generate quiz.");
+    if (!uploadHook.transcription) {
+      uploadHook.setErrorMessage("Transcription is required to generate quiz.");
       return;
     }
-    setLoading(true);
+    uploadHook.setLoading(true);
     try {
       const response = await fetch("http://localhost:5000/generate-quiz", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ transcription }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ transcription: uploadHook.transcription }),
       });
-
       const data = await response.json();
       if (response.ok) {
         setQuiz(data.quiz);
-        navigate("/quiz", {
-          state: { quiz: data.quiz, transcription: transcription },
-        });
+        updateStatsAfterQuizGeneration();
+        navigate("/quiz", { state: { quiz: data.quiz, transcription: uploadHook.transcription } });
       } else {
-        setErrorMessage(data.error || "Failed to generate quiz");
+        uploadHook.setErrorMessage(data.error || "Failed to generate quiz");
       }
     } catch (error) {
-      setErrorMessage("Failed to generate quiz");
+      uploadHook.setErrorMessage("Failed to generate quiz");
     } finally {
-      setLoading(false);
+      uploadHook.setLoading(false);
     }
   };
 
-  const getInitials = (name) => {
-    if (!name) return "";
-    return name
-      .split(" ")
-      .map((n) => n[0].toUpperCase())
-      .join("");
-  };
-
   const handleLogout = () => {
+    localStorage.removeItem('user');
+    localStorage.removeItem('userStats');
+    setUser({ name: '', email: '' });
     navigate("/signin");
   };
 
-  return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 to-purple-600 p-6 relative">
-      <div className="absolute top-4 right-4">
-        <div className="relative">
-          <div
-            className="bg-white shadow-lg rounded-full p-4 flex items-center justify-center w-12 h-12 cursor-pointer"
-            onClick={() => setShowDropdown(!showDropdown)}
-          >
-            <span className="text-gray-800 font-bold text-lg">
-              {getInitials(user?.name)}
-            </span>
-          </div>
-          {showDropdown && (
-            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 z-10">
-              <p className="px-4 py-2 text-gray-800 font-semibold">
-                {user?.name}
-              </p>
-              <p className="px-4 py-2 text-gray-600 text-sm">{user?.email}</p>
-              <button
-                className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100 font-semibold"
-                onClick={handleLogout}
-              >
-                Log out
-              </button>
-            </div>
-          )}
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 text-white animate-spin mx-auto mb-4" />
+          <p className="text-white">Loading...</p>
         </div>
       </div>
+    );
+  }
 
-      <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md mb-6 transform transition duration-500 hover:scale-105">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">
-          Upload Video from URL
-        </h1>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
+      <Header 
+        user={user} 
+        showDropdown={showDropdown} 
+        setShowDropdown={setShowDropdown} 
+        navigate={navigate} 
+        handleLogout={handleLogout} 
+      />
 
-        <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-2">
-            Enter video URL:
-          </label>
-          <input
-            type="text"
-            className="block w-full text-sm text-gray-500 border border-gray-300 rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500"
-            value={videoURL}
-            onChange={(e) => setVideoURL(e.target.value)}
-          />
-          {errorMessage && (
-            <p className="text-red-500 text-sm mt-2">{errorMessage}</p>
-          )}
-        </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="space-y-8"
+        >
+          <motion.div variants={itemVariants} className="text-center">
+            <h2 className="text-4xl font-bold text-white mb-2">
+              Welcome back, {user?.name}! 👋
+            </h2>
+            <p className="text-purple-200 text-lg">
+              Ready to create amazing quizzes from your videos?
+            </p>
+          </motion.div>
 
-        {!isTranscription && (
-          <Button
-            className="w-full bg-purple-500 hover:bg-purple-600 text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2"
-            onClick={handleURLUpload}
-          >
-            {loading ? <Loader2 className="animate-spin" /> : null}
-            {loading ? "Uploading" : "Upload Video"}
-          </Button>
-        )}
+          <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <StatCard icon={Trophy} title="Total Quizzes" value={userStats?.totalQuizzes || 0} subtitle="Created so far" color="bg-yellow-500" />
+            <StatCard icon={Target} title="Average Score" value={`${userStats?.averageScore || 0}%`} subtitle="Your performance" color="bg-green-500" />
+            <StatCard icon={TrendingUp} title="This Week" value={userStats?.quizzesThisWeek || 0} subtitle="Quizzes created" color="bg-blue-500" />
+            <StatCard icon={Zap} title="Streak" value={userStats?.streak || 0} subtitle="Days active" color="bg-purple-500" />
+          </motion.div>
 
-        {isTranscription && (
-          <Button
-            className="w-full bg-purple-500 hover:bg-purple-600 text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 mt-4"
-            onClick={handleGenerateQuiz}
-          >
-            {loading ? <Loader2 className="animate-spin" /> : null}
-            {loading ? "Generating" : "Generate Quiz"}
-          </Button>
-        )}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <motion.div variants={itemVariants} className="lg:col-span-2">
+              <UploadSection 
+                {...uploadHook}
+                handleGenerateQuiz={handleGenerateQuiz}
+              />
+            </motion.div>
+            <motion.div variants={itemVariants}>
+              <RecentQuizzes recentQuizzes={recentQuizzes} />
+            </motion.div>
+          </div>
+        </motion.div>
       </div>
     </div>
   );
 };
 
-export default UploadVideoPage;
+export default AdvancedHomePage;

@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 
 api_key = os.getenv("API_KEY")
 genai.configure(api_key=api_key)
+
 def cleanup_files(*file_paths):
     """
     Cleanup multiple files and handle any errors.
@@ -43,17 +44,137 @@ def extract_audio_from_youtube(youtube_url, output_dir="temp"):
         cleanup_files(audio_output_path)
         return None
 
+def extract_audio_from_local_video(local_video_path, output_dir="temp"):
+    """
+    Extracts audio from a local video file and saves it as MP3.
+    """
+    Path(output_dir).mkdir(exist_ok=True)
+    audio_output_path = os.path.join(output_dir, "output_audio.mp3")
+    
+    try:
+        print(f"Extracting audio from: {local_video_path}")
+        print(f"Output audio path: {audio_output_path}")
+        
+        # First, let's check if the video file is valid
+        probe_command = [
+            "ffprobe",
+            "-v", "quiet",
+            "-print_format", "json",
+            "-show_format",
+            "-show_streams",
+            local_video_path
+        ]
+        
+        try:
+            probe_result = subprocess.run(probe_command, check=True, capture_output=True, text=True)
+            print(f"Video file info: {probe_result.stdout[:500]}...")
+        except subprocess.CalledProcessError as e:
+            print(f"Error probing video file: {e}")
+            print(f"FFprobe stderr: {e.stderr}")
+            return None
+        
+        command = [
+            "ffmpeg",
+            "-i", local_video_path,
+            "-vn",  # No video
+            "-acodec", "mp3",
+            "-ar", "16000",  # Sample rate 16kHz for better Whisper performance
+            "-ac", "1",      # Mono audio
+            "-b:a", "128k",  # Bitrate
+            "-y",            # Overwrite output file
+            audio_output_path
+        ]
+        
+        print(f"Running command: {' '.join(command)}")
+        result = subprocess.run(command, check=True, capture_output=True, text=True)
+        print(f"FFmpeg stdout: {result.stdout}")
+        print(f"FFmpeg stderr: {result.stderr}")
+        
+        if os.path.exists(audio_output_path):
+            file_size = os.path.getsize(audio_output_path)
+            print(f"Audio file created successfully. Size: {file_size} bytes")
+            
+            # Verify the audio file is not empty and has content
+            if file_size > 0:
+                return audio_output_path
+            else:
+                print("Audio file is empty")
+                cleanup_files(audio_output_path)
+                return None
+        else:
+            print("Audio file was not created")
+            return None
+            
+    except subprocess.CalledProcessError as e:
+        print(f"FFmpeg error: {e}")
+        print(f"FFmpeg stdout: {e.stdout}")
+        print(f"FFmpeg stderr: {e.stderr}")
+        cleanup_files(audio_output_path)
+        return None
+    except Exception as e:
+        print(f"Error extracting audio: {e}")
+        cleanup_files(audio_output_path)
+        return None
+
 def transcribe_audio(audio_path):
     """
     Transcribes audio file using Whisper model.
     """
     try:
+        print(f"Starting transcription of: {audio_path}")
+        
+        if not os.path.exists(audio_path):
+            print(f"Audio file does not exist: {audio_path}")
+            return None
+            
+        file_size = os.path.getsize(audio_path)
+        print(f"Audio file size: {file_size} bytes")
+        
+        if file_size == 0:
+            print("Audio file is empty")
+            return None
+        
+        print("Loading Whisper model...")
         model = whisper.load_model("base")
+        print("Whisper model loaded successfully")
+        
+        print("Starting transcription...")
         result = model.transcribe(audio_path)
-        return result["text"]
+        transcription = result["text"]
+        
+        print(f"Transcription completed. Length: {len(transcription)} characters")
+        print(f"Transcription preview: {transcription[:200]}...")
+        
+        # Check if transcription is meaningful
+        if len(transcription.strip()) < 10:
+            print("Transcription seems too short, trying with larger model...")
+            try:
+                model_large = whisper.load_model("small")
+                result_large = model_large.transcribe(audio_path)
+                transcription_large = result_large["text"]
+                if len(transcription_large.strip()) > len(transcription.strip()):
+                    print("Using transcription from larger model")
+                    return transcription_large
+            except Exception as e:
+                print(f"Failed to use larger model: {e}")
+        
+        return transcription
     except Exception as e:
         print(f"Error transcribing audio: {e}")
-        return None
+        import traceback
+        traceback.print_exc()
+        
+        # Try with a different model as fallback
+        try:
+            print("Trying fallback transcription with 'tiny' model...")
+            model_tiny = whisper.load_model("tiny")
+            result_tiny = model_tiny.transcribe(audio_path)
+            transcription_tiny = result_tiny["text"]
+            print(f"Fallback transcription completed. Length: {len(transcription_tiny)} characters")
+            return transcription_tiny
+        except Exception as fallback_error:
+            print(f"Fallback transcription also failed: {fallback_error}")
+            return None
 
 def extract_json_from_response(response_text):
     """
@@ -89,7 +210,7 @@ def generate_quiz(transcription):
         ]
 
         model = genai.GenerativeModel(
-            model_name="gemini-1.5-pro-latest",
+            model_name="gemini-2.5-flash",
             generation_config=generation_config,
             safety_settings=safety_settings
         )
