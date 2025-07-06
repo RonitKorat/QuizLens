@@ -58,7 +58,8 @@ export default function SignIn() {
       const data = await result.json();
 
       if (result.ok) {
-        setUser({ name: data.name, email: data.email });
+        setUser({ name: data.user.name, email: data.user.email });
+        localStorage.setItem('token', data.auth);
         navigate("/home");
       } else {
         setErrors({ general: data.error || "Invalid credentials" });

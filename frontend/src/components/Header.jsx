@@ -4,7 +4,7 @@ import { Sparkles } from "lucide-react";
 import UserMenu from "./UserMenu";
 
 const Header = ({ user, showDropdown, setShowDropdown, navigate, handleLogout }) => (
-  <header className="bg-white/10 backdrop-blur-sm border-b border-white/20">
+  <header className="relative z-50 bg-white/10 backdrop-blur-sm border-b border-white/20">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="flex justify-between items-center py-4">
         <motion.div 
