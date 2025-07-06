@@ -7,6 +7,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const jwt=require('jsonwebtoken');
 const Jwt_Key="quiz";
+const axios = require('axios');
 
 app.use(express.json());
 app.use(cors());
@@ -58,7 +59,7 @@ app.post("/signup", async (req, res) => {
     console.log("User saved successfully:", savedUser);
     
     delete user.password;
-    jwt.sign({user},Jwt_Key,{expiresIn:"2h"},(err,token)=>{
+    jwt.sign({user},Jwt_Key,(err,token)=>{
       res.send({user,auth:token});
     }); 
   } catch (error) {
@@ -97,11 +98,23 @@ app.post("/signin", async (req, res) => {
 
 app.post("/quiz", verifyToken, async (req, res) => {
   try {
-    let quiz = new Quiz(req.body);
+    // Accept all quiz data from frontend
+    const { title, user, questions, score, time } = req.body;
+    if (!title || !questions || !user) {
+      return res.status(400).json({ message: "Missing required quiz data" });
+    }
+    let quiz = new Quiz({
+      title,
+      user,
+      questions,
+      score: score || 0,
+      time: time || 0
+    });
     quiz = await quiz.save();
     res.status(201).json({ message: "Quiz saved successfully", quiz });
   } catch (error) {
-    res.status(400).json({ message: "Error saving quiz", error });
+    console.error("Error in /quiz:", error);
+    res.status(400).json({ message: "Error saving quiz", error: error.message });
   }
 });
 

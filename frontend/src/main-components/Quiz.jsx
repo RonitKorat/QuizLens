@@ -32,7 +32,7 @@ const Quiz = () => {
   } = useQuiz();
 
   // No quiz available
-  if (!quiz || quiz.length === 0) {
+  if (!quiz || !quiz.questions || quiz.questions.length === 0) {
     return (
       <div className="min-h-screen bg-[rgb(10,25,47)] flex items-center justify-center">
         <div className="bg-white shadow-lg rounded-lg p-8 text-center">
@@ -70,9 +70,12 @@ const Quiz = () => {
   return (
     <div className="min-h-screen bg-[rgb(10,25,47)] p-6">
       <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-8">
+        {quiz.title && (
+          <h1 className="text-3xl font-bold text-center text-purple-700 mb-6">{quiz.title}</h1>
+        )}
         <QuizHeader 
           currentQuestion={currentQuestion}
-          totalQuestions={quiz.length}
+          totalQuestions={quiz.questions.length}
           timeLeft={timeLeft}
           answeredCount={Object.keys(answers).length}
           formatTime={formatTime}
@@ -80,14 +83,14 @@ const Quiz = () => {
 
         <QuizProgress 
           currentQuestion={currentQuestion}
-          totalQuestions={quiz.length}
+          totalQuestions={quiz.questions.length}
           answers={answers}
           setCurrentQuestion={setCurrentQuestion}
           getQuestionStatus={getQuestionStatus}
         />
 
         <QuizQuestion 
-          question={quiz[currentQuestion]}
+          question={quiz.questions[currentQuestion]}
           currentQuestion={currentQuestion}
           answers={answers}
           handleOptionChange={handleOptionChange}
@@ -95,7 +98,7 @@ const Quiz = () => {
 
         <QuizActions 
           currentQuestion={currentQuestion}
-          totalQuestions={quiz.length}
+          totalQuestions={quiz.questions.length}
           handlePrev={handlePrev}
           handleSkip={handleSkip}
           handleNext={handleNext}

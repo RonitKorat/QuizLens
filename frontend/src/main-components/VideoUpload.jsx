@@ -77,10 +77,12 @@ const UploadVideoPage = () => {
         }
 
         try {
-            const response = await fetch('http://localhost:5000/generate-quiz', {
+            const token = localStorage.getItem('token');
+            const response = await fetch('http://localhost:2200/quiz', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
                 },
                 body: JSON.stringify({ transcription }),
             });
@@ -88,7 +90,7 @@ const UploadVideoPage = () => {
             const data = await response.json();
             if (response.ok) {
                 setQuiz(data.quiz);
-                navigate('/quiz', { state: { quiz: data.quiz, transcription: transcription } });
+                navigate('/quiz', { state: { quiz: data.quiz, transcription } });
             } else {
                 setErrorMessage(data.error || 'Failed to generate quiz');
             }

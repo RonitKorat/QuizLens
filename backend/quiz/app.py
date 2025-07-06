@@ -192,7 +192,7 @@ def extract_json_from_response(response_text):
 
 def generate_quiz(transcription):
     """
-    Generates a quiz using Google's Generative AI based on the transcription.
+    Generates a quiz and a title using Google's Generative AI based on the transcription.
     """
     try:
         generation_config = {
@@ -215,8 +215,9 @@ def generate_quiz(transcription):
             safety_settings=safety_settings
         )
 
+        # Generate quiz questions
         prompt = (
-            "Based on the following transcription, create a quiz with 5 multiple-choice questions. "
+            "Based on the following transcription, create a quiz with 10 multiple-choice questions. "
             "Return ONLY a JSON array with no additional text. Each object in the array should have "
             "these exact keys: 'question', 'choice1', 'choice2', 'choice3', 'choice4', and 'answer' "
             "(where answer is a number 1-4).\n\n"
@@ -247,10 +248,19 @@ def generate_quiz(transcription):
             response = model.generate_content(simple_prompt)
             quiz_json = extract_json_from_response(response.text)
         
-        return quiz_json
+        # Generate a title for the quiz
+        title_prompt = (
+            "Based on the following transcription, generate a short, catchy, and relevant title for a quiz. "
+            "Return ONLY the title as plain text, no extra formatting.\n\n"
+            f"Transcription:\n{transcription}\n"
+        )
+        title_response = model.generate_content(title_prompt)
+        title = title_response.text.strip().replace('"', '')
+
+        return {"title": title, "questions": quiz_json}
 
     except Exception as e:
-        print(f"Error generating quiz: {e}")
+        print(f"Error generating quiz or title: {e}")
         return None
 
 def save_to_file(content, filename):

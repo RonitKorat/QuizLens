@@ -22,7 +22,7 @@ export const useQuiz = () => {
 
   // Timer effect for each question
   useEffect(() => {
-    if (!quizCompleted && quiz && quiz.length > 0) {
+    if (!quizCompleted && quiz && quiz.questions && quiz.questions.length > 0) {
       setTimeLeft(60);
       setQuestionStartTime(Date.now());
       
@@ -45,7 +45,7 @@ export const useQuiz = () => {
       setSkippedQuestions(prev => new Set([...prev, currentQuestion]));
     }
     
-    if (currentQuestion < quiz.length - 1) {
+    if (quiz && quiz.questions && currentQuestion < quiz.questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     } else {
       handleSubmit();
@@ -68,7 +68,7 @@ export const useQuiz = () => {
 
   const handleSkip = () => {
     setSkippedQuestions(prev => new Set([...prev, currentQuestion]));
-    if (currentQuestion < quiz.length - 1) {
+    if (quiz && quiz.questions && currentQuestion < quiz.questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     } else {
       handleSubmit();
@@ -76,7 +76,7 @@ export const useQuiz = () => {
   };
 
   const handleNext = () => {
-    if (currentQuestion < quiz.length - 1) {
+    if (quiz && quiz.questions && currentQuestion < quiz.questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     }
   };
@@ -91,7 +91,7 @@ export const useQuiz = () => {
     const totalTime = Date.now() - questionStartTime;
     
     let correctAnswers = 0;
-    const questions = quiz.map((question, index) => {
+    const questions = quiz.questions.map((question, index) => {
       const selectedChoice = answers[index];
       const isCorrect = selectedChoice === question.answer;
       if (isCorrect) {
@@ -113,14 +113,14 @@ export const useQuiz = () => {
       };
     });
 
-    const scorePercentage = (correctAnswers / quiz.length) * 100;
+    const scorePercentage = (correctAnswers / quiz.questions.length) * 100;
     const skippedCount = skippedQuestions.size;
 
     const data = {
       user: user.name,
       questions: questions,
       score: correctAnswers,
-      totalQuestions: quiz.length,
+      totalQuestions: quiz.questions.length,
       scorePercentage: scorePercentage,
       skippedCount: skippedCount,
       totalTime: totalTime / 1000,
@@ -148,7 +148,7 @@ export const useQuiz = () => {
 
     toast({
       title: "Quiz Completed!",
-      description: `You scored ${correctAnswers}/${quiz.length} (${scorePercentage.toFixed(1)}%)`,
+      description: `You scored ${correctAnswers}/${quiz.questions.length} (${scorePercentage.toFixed(1)}%)`,
     });
   };
 
