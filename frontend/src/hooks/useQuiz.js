@@ -114,16 +114,16 @@ export const useQuiz = () => {
     });
 
     const scorePercentage = (correctAnswers / quiz.questions.length) * 100;
-    const skippedCount = skippedQuestions.size;
+    const totalQuestions = quiz.questions.length;
 
     const data = {
-      user: user.name,
+      title: quiz.title,
+      user: user.email,
       questions: questions,
       score: correctAnswers,
-      totalQuestions: quiz.questions.length,
-      scorePercentage: scorePercentage,
-      skippedCount: skippedCount,
-      totalTime: totalTime / 1000,
+      time: totalTime / 1000,
+      scorePercentage,
+      totalQuestions,
     };
 
     setScoreData(data);
@@ -148,7 +148,7 @@ export const useQuiz = () => {
 
     toast({
       title: "Quiz Completed!",
-      description: `You scored ${correctAnswers}/${quiz.questions.length} (${scorePercentage.toFixed(1)}%)`,
+      description: `You scored ${correctAnswers}/${quiz.questions.length} (${((correctAnswers / quiz.questions.length) * 100).toFixed(1)}%)`,
     });
   };
 

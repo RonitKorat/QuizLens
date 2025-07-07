@@ -16,7 +16,7 @@ const quizSchema = new mongoose.Schema({
   questions: { type: [questionSchema], required: true },
   score: { type: Number, required: true },
   time: { type: Number, required: true },
-});
+}, { timestamps: true });
 
 const Quiz = mongoose.model("Quiz", quizSchema);
 

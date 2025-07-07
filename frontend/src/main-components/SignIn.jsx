@@ -17,9 +17,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function SignIn() {
-  const [formData, setFormData] = useState({
-    email: "", password: ""
-  });
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
@@ -32,7 +30,6 @@ export default function SignIn() {
     if (!formData.email.trim()) newErrors.email = "Email is required";
     else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = "Invalid email";
     if (!formData.password) newErrors.password = "Password is required";
-    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -51,7 +48,7 @@ export default function SignIn() {
     try {
       const result = await fetch("http://localhost:2200/signin", {
         method: "POST",
-        body: JSON.stringify({ email: formData.email, password: formData.password }),
+        body: JSON.stringify(formData),
         headers: { "Content-Type": "application/json" },
       });
 
@@ -80,6 +77,7 @@ export default function SignIn() {
         value={value}
         onChange={(e) => onChange(field, e.target.value)}
         className="pl-10 bg-white/80 backdrop-blur-sm border-white/30 text-gray-900"
+        autoComplete="off"
       />
       {error && (
         <motion.p
@@ -96,7 +94,6 @@ export default function SignIn() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 relative overflow-hidden">
-      {/* Animated background */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
           className="absolute top-20 left-20 w-72 h-72 bg-purple-500/20 rounded-full blur-3xl"
@@ -117,7 +114,6 @@ export default function SignIn() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          {/* Header */}
           <motion.div className="text-center mb-8" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
             <motion.div
               className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl mb-4"
@@ -129,7 +125,6 @@ export default function SignIn() {
             <p className="text-purple-200">Sign in to your QuizAI account</p>
           </motion.div>
 
-          {/* Error Message */}
           <AnimatePresence>
             {errors.general && (
               <motion.div
@@ -143,19 +138,29 @@ export default function SignIn() {
             )}
           </AnimatePresence>
 
-          {/* Form */}
           <Card className="backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl">
             <CardContent className="p-6">
               <form onSubmit={handleSubmit} className="space-y-6">
-                <InputField
-                  icon={Mail}
-                  type="email"
-                  placeholder="Email Address"
-                  field="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  error={errors.email}
-                />
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Input
+                    type="email"
+                    placeholder="Email Address"
+                    value={formData.email}
+                    onChange={(e) => handleInputChange('email', e.target.value)}
+                    className="pl-10 bg-white/80 backdrop-blur-sm border-white/30 text-gray-900"
+                  />
+                  {errors.email && (
+                    <motion.p
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-red-400 text-sm mt-1 flex items-center"
+                    >
+                      <AlertCircle className="w-4 h-4 mr-1" />
+                      {errors.email}
+                    </motion.p>
+                  )}
+                </div>
                 
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />

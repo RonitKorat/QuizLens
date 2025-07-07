@@ -12,6 +12,24 @@ const axios = require('axios');
 app.use(express.json());
 app.use(cors());
 
+
+function verifyToken(req, res, next) {
+  let token = req.headers['authorization'];
+  if (token) {
+    token = token.split(' ')[1];
+    jwt.verify(token, Jwt_Key, (err, decoded) => {
+      if (err) {
+        res.status(403).send("please enter valid token");
+      } else {
+        req.user = decoded.user;
+        next();
+      }
+    });
+  } else {
+    res.status(403).send("please enter token");
+  }
+}
+
 // Test endpoint to check database connectivity
 app.get("/test", async (req, res) => {
   try {
@@ -118,32 +136,105 @@ app.post("/quiz", verifyToken, async (req, res) => {
   }
 });
 
-app.get("/scoreboard",async(req,res)=>{
-  const data=await Quiz.find();
-  console.log(data);
-  res.send(data);
-});
+app.get("/leaderboard", async (req, res) => {
+  try {
+    // Aggregate quizzes by user
+    const quizzes = await Quiz.find();
+    const userStats = {};
 
-app.get("/user/stats",verifyToken,async(req,res)=>{
-  
-});
-
-function verifyToken(req, res, next) {
-  let token = req.headers['authorization'];
-  if (token) {
-    token = token.split(' ')[1];
-    jwt.verify(token, Jwt_Key, (err, decoded) => {
-      if (err) {
-        res.status(403).send("please enter valid token");
-      } else {
-        req.user = decoded.user;
-        next();
+    quizzes.forEach(quiz => {
+      const user = quiz.user;
+      if (!userStats[user]) {
+        userStats[user] = {
+          user,
+          totalScore: 0,
+          totalQuizzes: 0,
+          totalTime: 0,
+        };
       }
+      userStats[user].totalScore += quiz.score;
+      userStats[user].totalQuizzes += 1;
+      userStats[user].totalTime += quiz.time || 0;
     });
-  } else {
-    res.status(403).send("please enter token");
+
+    // Convert to array and calculate averages
+    const leaderboard = Object.values(userStats).map((u) => ({
+      name: u.user,
+      score: Math.round((u.totalScore / u.totalQuizzes) * 10), // as percentage
+      totalQuizzes: u.totalQuizzes,
+      averageTime: u.totalQuizzes ? Math.round(u.totalTime / u.totalQuizzes) : 0,
+    }));
+
+    // Sort by score descending
+    leaderboard.sort((a, b) => b.score - a.score);
+
+    // Add rank
+    leaderboard.forEach((u, i) => (u.rank = i + 1));
+
+    res.json(leaderboard);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch leaderboard", details: error.message });
   }
-}
+});
+
+app.get("/recent-quizzes", verifyToken, async (req, res) => {
+  try {
+    const userEmail = req.user.email;
+    const recentQuizzes = await Quiz.find({ user: userEmail })
+      .sort({ createdAt: -1 })
+      .limit(3);
+    res.status(200).json({ quizzes: recentQuizzes });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch recent quizzes", details: error.message });
+  }
+});
+
+app.get("/user-stats",verifyToken,async(req,res)=>{
+  try{
+    const userEmail=req.user.email;
+    const userQuizzes=await Quiz.find({user:userEmail});
+    if(userQuizzes.length===0)
+    {
+      return res.status(200).json({totalQuizzes:0,averageScore:0,quizzesThisWeek:0,streak:0});
+    }
+    const totalQuizzes=userQuizzes.length;
+
+    const totalScore=userQuizzes.reduce((sum,quiz)=>sum+quiz.score,0);
+    const averageScore=Math.round((totalScore/totalQuizzes)*10);
+    const oneWeekAgo=new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate()-7);
+    const quizzesThisWeek=userQuizzes.filter(quiz=>{
+      new Date(quiz.createdAt)>=oneWeekAgo
+    }).length;
+    let streak = 0;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    for (let i = 0; i < 30; i++) { 
+      const checkDate = new Date(today);
+      checkDate.setDate(checkDate.getDate() - i);
+      
+      const hasQuizOnDate = userQuizzes.some(quiz => {
+        const quizDate = new Date(quiz.createdAt);
+        quizDate.setHours(0, 0, 0, 0);
+        return quizDate.getTime() === checkDate.getTime();
+      });
+      
+      if (hasQuizOnDate) {
+        streak++;
+      } else {
+        break; 
+      }
+    }
+    res.status(200).json({
+      totalQuizzes,averageScore,quizzesThisWeek,streak
+    });
+  }
+  catch(error){
+    res.status.json({error:"Failed to fetch recent quiz",details:error.message});
+  }
+});
+
 
 app.listen(2200, () => {
   console.log("Server is running on port 2200");

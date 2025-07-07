@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import UserContext from "../context/userContext";
 import QuizContext from "../context/quizContext";
@@ -25,11 +25,7 @@ const itemVariants = {
 
 const AdvancedHomePage = () => {
   const [showDropdown, setShowDropdown] = useState(false);
-  const [recentQuizzes] = useState([
-    { id: 1, title: "JavaScript Fundamentals", score: 90, date: "2 hours ago" },
-    { id: 2, title: "React Hooks", score: 75, date: "1 day ago" },
-    { id: 3, title: "Python Basics", score: 95, date: "3 days ago" }
-  ]);
+  const [recentQuizzes, setRecentQuizzes] = useState([]);
 
   const { user, userStats, setUserStats, setUser, isLoading } = useContext(UserContext);
   const navigate = useNavigate();
@@ -37,6 +33,49 @@ const AdvancedHomePage = () => {
 
   // Use custom upload hook
   const uploadHook = useUpload();
+
+  useEffect(() => {
+    const fetchRecentQuizzes = async () => {
+      const token = localStorage.getItem("token");
+      try {
+        const response = await fetch("http://localhost:2200/recent-quizzes", {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+          },
+        });
+        const data = await response.json();
+        if (response.ok && data.quizzes) {
+          setRecentQuizzes(data.quizzes);
+        } else {
+          setRecentQuizzes([]);
+        }
+      } catch (error) {
+        setRecentQuizzes([]);
+      }
+    };
+
+    const fetchUserStats = async () => {
+      const token = localStorage.getItem("token");
+      try {
+        const response = await fetch("http://localhost:2200/user-stats", {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+          },
+        });
+        const data = await response.json();
+        if (response.ok) {
+          setUserStats(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch user stats:", error);
+      }
+    };
+
+    fetchRecentQuizzes();
+    fetchUserStats();
+  }, [setUserStats]);
 
   const updateStatsAfterQuizGeneration = () => {
     setUserStats(prevStats => ({

@@ -77,22 +77,40 @@ const UploadVideoPage = () => {
         }
 
         try {
+            // Step 1: Generate quiz from Python backend
+            const quizGenResponse = await fetch('http://localhost:5000/generate-quiz', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ transcription }),
+            });
+            const quizGenData = await quizGenResponse.json();
+            if (!quizGenResponse.ok || !quizGenData.quiz) {
+                setErrorMessage(quizGenData.error || 'Failed to generate quiz from transcription');
+                return;
+            }
+
+            // Step 2: Save quiz to Node backend
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:2200/quiz', {
+            const saveQuizResponse = await fetch('http://localhost:2200/quiz', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
-                body: JSON.stringify({ transcription }),
+                body: JSON.stringify({
+                    title: quizGenData.quiz.title,
+                    user: user.email,
+                    questions: quizGenData.quiz.questions,
+                    score: 0,
+                    time: 0,
+                }),
             });
-
-            const data = await response.json();
-            if (response.ok) {
-                setQuiz(data.quiz);
-                navigate('/quiz', { state: { quiz: data.quiz, transcription } });
+            const saveQuizData = await saveQuizResponse.json();
+            if (saveQuizResponse.ok) {
+                setQuiz(saveQuizData.quiz);
+                navigate('/quiz', { state: { quiz: saveQuizData.quiz, transcription } });
             } else {
-                setErrorMessage(data.error || 'Failed to generate quiz');
+                setErrorMessage(saveQuizData.error || 'Failed to save quiz');
             }
         } catch (error) {
             setErrorMessage('Failed to generate quiz');
