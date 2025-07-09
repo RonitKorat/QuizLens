@@ -42,10 +42,7 @@ const UserMenu = ({ user, showDropdown, setShowDropdown, navigate, handleLogout 
             <Award className="w-4 h-4" />
             <span>Leaderboard</span>
           </button>
-          <button className="w-full text-left px-4 py-2 text-white hover:bg-white/20 flex items-center space-x-2">
-            <Settings className="w-4 h-4" />
-            <span>Settings</span>
-          </button>
+         
           <button 
             onClick={handleLogout}
             className="w-full text-left px-4 py-2 text-red-300 hover:bg-red-500/20 flex items-center space-x-2"

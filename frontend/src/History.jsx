@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import QuizContext from "./context/quizContext";
+import TotalQuizzes from "../components/TotalQuizzes";
 
 export default function History() {
   const [historyData, setHistoryData] = useState([]);

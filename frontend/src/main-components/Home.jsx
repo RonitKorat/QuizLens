@@ -73,8 +73,32 @@ const AdvancedHomePage = () => {
       }
     };
 
+    const fetchAllQuizzes = async () => {
+      const token = localStorage.getItem("token");
+      try {
+        console.log("Token:", token);
+        let response = await fetch("http://localhost:2200/allquiz", {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+          }
+        });
+
+        let data = await response.json();
+        if (response.ok) {
+          setQuiz(data);
+          console.log(data);
+        } else {
+          console.log("Quiz fetch failed:", data);
+        }
+      } catch (error) {
+        console.log("Fail to fetch quiz", error);
+      }
+    };
+
     fetchRecentQuizzes();
     fetchUserStats();
+    fetchAllQuizzes();
   }, [setUserStats]);
 
   const updateStatsAfterQuizGeneration = () => {
@@ -157,7 +181,9 @@ const AdvancedHomePage = () => {
           </motion.div>
 
           <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div onClick={() => navigate('/all-quizzes')} style={{ cursor: 'pointer' }}>
             <StatCard icon={Trophy} title="Total Quizzes" value={userStats?.totalQuizzes || 0} subtitle="Created so far" color="bg-yellow-500" />
+            </div>
             <StatCard icon={Target} title="Average Score" value={`${userStats?.averageScore || 0}%`} subtitle="Your performance" color="bg-green-500" />
             <StatCard icon={TrendingUp} title="This Week" value={userStats?.quizzesThisWeek || 0} subtitle="Quizzes created" color="bg-blue-500" />
             <StatCard icon={Zap} title="Streak" value={userStats?.streak || 0} subtitle="Days active" color="bg-purple-500" />

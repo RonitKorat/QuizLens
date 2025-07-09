@@ -136,9 +136,35 @@ app.post("/quiz", verifyToken, async (req, res) => {
   }
 });
 
+app.get("/allquiz",verifyToken,async(req,res)=>{
+  try{
+    const user=req.user.email;
+    const quizzes = await Quiz.find({user});
+    res.json({quizzes});
+  }catch(error)
+  {
+    res.status(403).send({message:"error in fetching quiz",error:error.message});
+  }
+});
+
+app.get("/quiz/:quizId", verifyToken, async (req, res) => {
+  try {
+    const quizId = req.params.quizId;
+    const quiz = await Quiz.findById(quizId);
+    if (!quiz) {
+      return res.status(404).json({ error: "Quiz not found" });
+    }
+    if (quiz.user !== req.user.email) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+    res.status(200).json({ quiz });
+  } catch (error) {
+    res.status(500).send({ error: "Failed to fetch quiz", details: error.message });
+  }
+});
+
 app.get("/leaderboard", async (req, res) => {
   try {
-    // Aggregate quizzes by user
     const quizzes = await Quiz.find();
     const userStats = {};
 
@@ -157,18 +183,25 @@ app.get("/leaderboard", async (req, res) => {
       userStats[user].totalTime += quiz.time || 0;
     });
 
-    // Convert to array and calculate averages
+    // Get all unique user emails
+    const userEmails = Object.keys(userStats);
+
+    // Fetch user names from User collection
+    const users = await User.find({ email: { $in: userEmails } });
+    const emailToName = {};
+    users.forEach(u => {
+      emailToName[u.email] = u.name;
+    });
+
+    // Build leaderboard with names
     const leaderboard = Object.values(userStats).map((u) => ({
-      name: u.user,
-      score: Math.round((u.totalScore / u.totalQuizzes) * 10), // as percentage
+      name: emailToName[u.user] || u.user, // fallback to email if name not found
+      score: Math.round((u.totalScore / u.totalQuizzes) * 10),
       totalQuizzes: u.totalQuizzes,
       averageTime: u.totalQuizzes ? Math.round(u.totalTime / u.totalQuizzes) : 0,
     }));
 
-    // Sort by score descending
     leaderboard.sort((a, b) => b.score - a.score);
-
-    // Add rank
     leaderboard.forEach((u, i) => (u.rank = i + 1));
 
     res.json(leaderboard);

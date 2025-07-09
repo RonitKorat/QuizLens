@@ -9,9 +9,17 @@ import {QuizState} from "./context/quizState";
 import ProtectedRoute from "./main-components/ProtectedRoute";
 import Review from "./main-components/Review";
 import { Toaster } from "@/components/ui/toaster"
-import ScoreCard from "./main-components/ScoreCard";
+import TotalQuizzes from "./components/TotalQuizzes";
+import { useContext } from "react";
+import QuizContext from "./context/quizContext";
+import AllQuizzes from "./components/AllQuizzes";
 
 export default function App() {
+  const { quiz } = useContext(QuizContext);
+
+  // If your quiz state is { quizzes: [...] }
+  const quizzes = Array.isArray(quiz) ? quiz : quiz?.quizzes || [];
+
   return (
     <>
       <QuizState>
@@ -45,8 +53,9 @@ export default function App() {
                 </ProtectedRoute>
               }
             ></Route>
-            <Route path="/review" element={<Review />}></Route>
-            <Route path="/scorecard" element={<ScoreCard />}></Route>
+            <Route path="/review/:quizId" element={<Review />} />
+            <Route path="/total-quizzes" element={<TotalQuizzes />} />
+            <Route path="/all-quizzes" element={<AllQuizzes />} />
           </Routes>
         </UserState>
       </QuizState>
