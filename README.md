@@ -1,5 +1,8 @@
 # 🚀 Quizlens: Video To Quiz Generator
 
+
+👉 **[Live Demo](https://quizlens-3.onrender.com)**
+
 Want to create engaging quizzes from your video content without the hassle? **QuizLens** is your **AI-powered solution** to automatically generate interactive quizzes from any video. Simply upload your video, and let our system handle the rest! Perfect for educators, content creators, or anyone looking to enhance learning through interactive assessment.
 
 ---
