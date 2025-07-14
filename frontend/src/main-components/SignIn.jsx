@@ -122,7 +122,7 @@ export default function SignIn() {
               <Sparkles className="w-8 h-8 text-white" />
             </motion.div>
             <h1 className="text-4xl font-bold text-white mb-2">Welcome Back</h1>
-            <p className="text-purple-200">Sign in to your QuizAI account</p>
+            <p className="text-purple-200">Sign in to your QuizLens account</p>
           </motion.div>
 
           <AnimatePresence>

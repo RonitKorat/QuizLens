@@ -109,7 +109,7 @@ export default function SignUp() {
             >
               <Sparkles className="w-8 h-8 text-white" />
             </motion.div>
-            <h1 className="text-4xl font-bold text-white mb-2">Join QuizAI</h1>
+            <h1 className="text-4xl font-bold text-white mb-2">Join QuizLens</h1>
             <p className="text-purple-200">Create your account and start learning</p>
           </motion.div>
 

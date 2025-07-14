@@ -268,6 +268,22 @@ app.get("/user-stats",verifyToken,async(req,res)=>{
   }
 });
 
+// Add this endpoint to proxy quiz generation to Flask
+app.post("/generate-quiz", async (req, res) => {
+  try {
+    const { transcription } = req.body;
+    if (!transcription) {
+      return res.status(400).json({ error: "Transcription is required" });
+    }
+    // Call Flask backend
+    const flaskResponse = await axios.post("http://localhost:5000/generate-quiz", { transcription });
+    res.json(flaskResponse.data);
+  } catch (error) {
+    console.error("Error in /generate-quiz proxy:", error.message);
+    res.status(500).json({ error: "Failed to generate quiz", details: error.message });
+  }
+});
+
 
 app.listen(2200, () => {
   console.log("Server is running on port 2200");

@@ -77,8 +77,8 @@ const UploadVideoPage = () => {
         }
 
         try {
-            // Step 1: Generate quiz from Python backend
-            const quizGenResponse = await fetch('http://localhost:5000/generate-quiz', {
+            // Step 1: Generate quiz from Node backend
+            const quizGenResponse = await fetch('http://localhost:2200/generate-quiz', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ transcription }),

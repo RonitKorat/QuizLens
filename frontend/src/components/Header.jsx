@@ -15,7 +15,7 @@ const Header = ({ user, showDropdown, setShowDropdown, navigate, handleLogout })
           <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg">
             <Sparkles className="w-6 h-6 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-white">QuizAI Dashboard</h1>
+          <h1 className="text-2xl font-bold text-white">QuizLens Dashboard</h1>
         </motion.div>
         <UserMenu 
           user={user} 
