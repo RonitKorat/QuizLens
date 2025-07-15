@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_talisman import Talisman
 from server import (
     extract_audio_from_youtube, 
     extract_audio_from_local_video,
@@ -9,8 +10,15 @@ from server import (
 )
 from flask_cors import CORS
 import os
+csp = {
+    'default-src': '\'self\'',
+    'style-src': ['\'self\'', 'https://fonts.googleapis.com'],
+    'font-src': ['\'self\'', 'https://fonts.gstatic.com']
+}
 
 app = Flask(__name__)
+
+Talisman(app, content_security_policy=csp)
 CORS(app)
 
 @app.route('/extract-audio', methods=['POST'])
