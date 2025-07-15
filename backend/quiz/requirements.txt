@@ -4,3 +4,4 @@ openai-whisper
 google-generativeai
 python-dotenv 
 gunicorn
+flask_talisman 
