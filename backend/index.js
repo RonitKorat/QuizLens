@@ -15,6 +15,15 @@ app.use(helmet());
 app.use(express.json());
 app.use(cors());
 
+// Set Content Security Policy to allow Google Fonts
+app.use((req, res, next) => {
+  res.setHeader(
+    "Content-Security-Policy",
+    "default-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com;"
+  );
+  next();
+});
+
 function verifyToken(req, res, next) {
   let token = req.headers["authorization"];
   if (token) {
