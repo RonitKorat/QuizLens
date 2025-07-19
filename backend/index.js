@@ -13,23 +13,26 @@ const helmet = require("helmet");
 
 app.use(
   helmet.contentSecurityPolicy({
+    useDefaults: true,
     directives: {
       defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "https://fonts.googleapis.com"],
+      styleSrc: ["'self'", "https://fonts.googleapis.com", "'unsafe-inline'"],
+      styleSrcElem: ["'self'", "https://fonts.googleapis.com", "'unsafe-inline'"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      fontSrcElem: ["'self'", "https://fonts.gstatic.com"],
       scriptSrc: ["'self'"],
       imgSrc: ["'self'"],
       connectSrc: ["'self'"],
-      // Add these to fix your exact error
-      styleSrcElem: ["'self'", "https://fonts.googleapis.com"],
-      fontSrcElem: ["'self'", "https://fonts.gstatic.com"],
+      objectSrc: ["'none'"],
+      baseUri: ["'self'"],
+      frameAncestors: ["'self'"],
     },
   })
 );
 
+
 app.use(express.json());
 app.use(cors());
-app.use(helmet());
 
 function verifyToken(req, res, next) {
   let token = req.headers["authorization"];
