@@ -182,11 +182,11 @@ const AdvancedHomePage = () => {
 
           <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div onClick={() => navigate('/all-quizzes')} style={{ cursor: 'pointer' }}>
-            <StatCard icon={Trophy} title="Total Quizzes" value={userStats?.totalQuizzes || 0} subtitle="Created so far" color="bg-yellow-500" />
+            <StatCard icon={Trophy} title="Total Quizzes" value={typeof userStats?.totalQuizzes === "object" ? JSON.stringify(userStats?.totalQuizzes) : userStats?.totalQuizzes || 0} subtitle="Created so far" color="bg-yellow-500" />
             </div>
-            <StatCard icon={Target} title="Average Score" value={`${userStats?.averageScore || 0}%`} subtitle="Your performance" color="bg-green-500" />
-            <StatCard icon={TrendingUp} title="This Week" value={userStats?.quizzesThisWeek || 0} subtitle="Quizzes created" color="bg-blue-500" />
-            <StatCard icon={Zap} title="Streak" value={userStats?.streak || 0} subtitle="Days active" color="bg-purple-500" />
+            <StatCard icon={Target} title="Average Score" value={typeof userStats?.averageScore === "object" ? JSON.stringify(userStats?.averageScore) : `${userStats?.averageScore || 0}%`} subtitle="Your performance" color="bg-green-500" />
+            <StatCard icon={TrendingUp} title="This Week" value={typeof userStats?.quizzesThisWeek === "object" ? JSON.stringify(userStats?.quizzesThisWeek) : userStats?.quizzesThisWeek || 0} subtitle="Quizzes created" color="bg-blue-500" />
+            <StatCard icon={Zap} title="Streak" value={typeof userStats?.streak === "object" ? JSON.stringify(userStats?.streak) : userStats?.streak || 0} subtitle="Days active" color="bg-purple-500" />
           </motion.div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
