@@ -16,18 +16,20 @@ app.use(
     directives: {
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "https://fonts.googleapis.com"],
-      styleSrcElem: ["'self'", "https://fonts.googleapis.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      fontSrcElem: ["'self'", "https://fonts.gstatic.com"],
       scriptSrc: ["'self'"],
       imgSrc: ["'self'"],
       connectSrc: ["'self'"],
+      // Add these to fix your exact error
+      styleSrcElem: ["'self'", "https://fonts.googleapis.com"],
+      fontSrcElem: ["'self'", "https://fonts.gstatic.com"],
     },
   })
 );
 
 app.use(express.json());
 app.use(cors());
+app.use(helmet());
 
 function verifyToken(req, res, next) {
   let token = req.headers["authorization"];
